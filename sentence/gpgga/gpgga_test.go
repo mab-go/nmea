@@ -130,14 +130,17 @@ func TestParseGPGGA_badSegments(t *testing.T) {
 
 			if err == nil {
 				t.Errorf("parsing succeeded (but should not have) for test sentence [%v]", i)
+				return
 			}
 
 			if gpgga != nil {
 				t.Errorf("result should have been <nil> but was %v for test sentence [%v]", gpgga, i)
+				return
 			}
 
 			if err.Error() != data.ErrMsg {
 				t.Errorf("error message should have been '%v' but was '%v' for test sentence [%v]", data.ErrMsg, err.Error(), i)
+				return
 			}
 		})
 	}

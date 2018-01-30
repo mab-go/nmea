@@ -3,11 +3,7 @@
 package gpgga // import "gopkg.in/mab-go/nmea.v0/sentence/gpgga"
 
 import (
-	"fmt"
-	"strconv"
-	"strings"
-
-	"bitbucket.org/mabgo/nmea/sentence"
+	"gopkg.in/mab-go/nmea.v0/sentence"
 )
 
 // --- Public ------------------------------------------------------------------
@@ -107,271 +103,32 @@ var _ sentence.NMEASentence = GPGGA{}
 // ParseGPGGA parses a GPGGA sentence string and returns a pointer to a GPGGA struct
 // (or an error if the sentence is invalid).
 func ParseGPGGA(s string) (*GPGGA, error) {
-	gpgga := &GPGGA{}
-
-	if err := sentence.VerifyChecksum(s); err != nil {
+	segments := &sentence.SegmentParser{}
+	if err := segments.Parse(s); err != nil {
 		return nil, err
 	}
 
-	// Strip the first character ("$") and the last three characters (the checksum),
-	// and then split the remaining string on a comma (",").
-	parts := strings.Split(strings.ToUpper(s[1:len(s)-3]), ",")
-
-	// Part [0]: SentenceType
-	if parts[0] != "GPGGA" {
-		return nil, fmt.Errorf("sentence segment [0] must be \"GPGGA\" but was \"%v\"", parts[0])
+	_ = segments.RequireString(0, "GPGGA") // Verify sentence type
+	gpgga := &GPGGA{
+		FixTime:        segments.AsFloat32(1),
+		Latitude:       segments.AsFloat64(2),
+		NorthSouth:     segments.RequireStrings(3, []string{"N", "S"}),
+		Longitude:      segments.AsFloat64(4),
+		EastWest:       segments.RequireStrings(5, []string{"E", "W"}),
+		FixQuality:     segments.AsInt8InRange(6, 0, 8),
+		SatCount:       segments.AsInt8(7),
+		HDOP:           segments.AsFloat32(8),
+		Altitude:       segments.AsFloat32(9),
+		AltitudeUOM:    segments.RequireString(10, "M"),
+		GeoidHeight:    segments.AsFloat32(11),
+		GeoidHeightUOM: segments.RequireString(12, "M"),
+		DGPSUpdateAge:  segments.AsInt32(13),
+		DGPSStationID:  segments.AsInt16(14),
 	}
 
-	// Part [1]: FixTime
-	fixTime, err := parseFixTime(parts[1])
-	if err != nil {
+	if err := segments.Err(); err != nil {
 		return nil, err
 	}
-	gpgga.FixTime = fixTime
-
-	// Part [2]: Latitude
-	latitude, err := parseLatitude(parts[2])
-	if err != nil {
-		return nil, err
-	}
-	gpgga.Latitude = latitude
-
-	// Part [3]: NorthSouth
-	northSouth, err := parseNorthSouth(parts[3])
-	if err != nil {
-		return nil, err
-	}
-	gpgga.NorthSouth = northSouth
-
-	// Part [4]: Longitude
-	longitude, err := parseLongitude(parts[4])
-	if err != nil {
-		return nil, err
-	}
-	gpgga.Longitude = longitude
-
-	// Part [5]: EastWest
-	eastWest, err := parseEastWest(parts[5])
-	if err != nil {
-		return nil, err
-	}
-	gpgga.EastWest = eastWest
-
-	// Part [6]: FixQuality
-	fixQuality, err := parseFixQuality(parts[6])
-	if err != nil {
-		return nil, err
-	}
-	gpgga.FixQuality = fixQuality
-
-	// Part [7]: SatCount
-	satCount, err := parseSatCount(parts[7])
-	if err != nil {
-		return nil, err
-	}
-	gpgga.SatCount = satCount
-
-	// Part [8]: HDOP
-	hdop, err := parseHdop(parts[8])
-	if err != nil {
-		return nil, err
-	}
-	gpgga.HDOP = hdop
-
-	// Part [9]: Altitude
-	altitude, err := parseAltitude(parts[9])
-	if err != nil {
-		return nil, err
-	}
-	gpgga.Altitude = altitude
-
-	// Part [10]: AltitudeUOM
-	altitudeUom, err := parseAltitudeUom(parts[10])
-	if err != nil {
-		return nil, err
-	}
-	gpgga.AltitudeUOM = altitudeUom
-
-	// Part [11]: GeoidHeight
-	geoidHeight, err := parseGeoidHeight(parts[11])
-	if err != nil {
-		return nil, err
-	}
-	gpgga.GeoidHeight = geoidHeight
-
-	// Part [12]: GeoidHeightUOM
-	geoidHeightUom, err := parseGeoidHeightUom(parts[12])
-	if err != nil {
-		return nil, err
-	}
-	gpgga.GeoidHeightUOM = geoidHeightUom
-
-	// Part [13]: DGPSUpdateAge
-	dgpsUpdateAge, err := parseDgpsUpdateAge(parts[13])
-	if err != nil {
-		return nil, err
-	}
-	gpgga.DGPSUpdateAge = dgpsUpdateAge
-
-	// Part [14]: DGPS station ID
-	dgpsStationID, err := parseDgpsStationID(parts[14])
-	if err != nil {
-		return nil, err
-	}
-	gpgga.DGPSStationID = dgpsStationID
 
 	return gpgga, nil
-}
-
-// --- Private -----------------------------------------------------------------
-
-func parseFixTime(s string) (float32, error) {
-	//var fixTime float32
-	fixTime, err := strconv.ParseFloat(s, 32)
-	if err != nil {
-		return 0, fmt.Errorf("sentence segment [1] must be parsable as a float32 but was \"%v\"", s)
-	}
-
-	return float32(fixTime), nil
-}
-
-func parseLatitude(s string) (float64, error) {
-	latitude, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		return 0, fmt.Errorf("sentence segment [2] must be parsable as a float64 but was \"%v\"", s)
-	}
-
-	return latitude, nil
-}
-
-func parseNorthSouth(s string) (string, error) {
-	var northSouth string
-	if s == "N" || s == "S" {
-		northSouth = s
-	} else {
-		return "", fmt.Errorf("sentence segment [3] must be \"N\" or \"S\" (case insensitive) but was \"%v\"", s)
-	}
-
-	return northSouth, nil
-}
-
-func parseLongitude(s string) (float64, error) {
-	longitude, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		return 0, fmt.Errorf("sentence segment [4] must be parsable as a float64 but was \"%v\"", s)
-	}
-
-	return longitude, nil
-}
-
-func parseEastWest(s string) (string, error) {
-	var eastWest string
-	if s == "E" || s == "W" {
-		eastWest = s
-	} else {
-		return "", fmt.Errorf("sentence segment [5] must be \"E\" or \"W\" (case insensitive) but was \"%v\"", s)
-	}
-
-	return eastWest, nil
-}
-
-func parseFixQuality(s string) (int8, error) {
-	var fixQuality int8
-	if v, err := strconv.ParseInt(s, 10, 8); err != nil {
-		return 0, fmt.Errorf("sentence segment [6] must be parsable as an int8 but was \"%v\"", s)
-	} else if v < 0 || v > 8 {
-		return 0, fmt.Errorf("sentence segment [6] must be within 0..8 but was %v", s)
-	} else {
-		fixQuality = int8(v)
-	}
-
-	return fixQuality, nil
-}
-
-func parseSatCount(s string) (int8, error) {
-	var satCount int8
-	if v, err := strconv.ParseInt(s, 10, 8); err != nil {
-		return 0, fmt.Errorf("sentence segment [7] must be parsable as an int8 but was \"%v\"", s)
-	} else if v < 0 {
-		return 0, fmt.Errorf("sentence segment [7] must not be negative but was %v", s)
-	} else {
-		satCount = int8(v)
-	}
-
-	return satCount, nil
-}
-
-func parseHdop(s string) (float32, error) {
-	hdop, err := strconv.ParseFloat(s, 32)
-	if err != nil {
-		return 0, fmt.Errorf("sentence segment [8] must be parsable as a float32 but was \"%v\"", s)
-	}
-
-	return float32(hdop), nil
-}
-
-func parseAltitude(s string) (float32, error) {
-	altitude, err := strconv.ParseFloat(s, 32)
-	if err != nil {
-		return 0, fmt.Errorf("sentence segment [9] must be parsable as a float32 but was \"%v\"", s)
-	}
-
-	return float32(altitude), nil
-}
-
-func parseAltitudeUom(s string) (string, error) {
-	var altitudeUom string
-	if s == "M" {
-		altitudeUom = s
-	} else {
-		return "", fmt.Errorf("sentence segment [10] must be \"M\" (case insensitive) but was \"%v\"", s)
-	}
-
-	return altitudeUom, nil
-}
-
-func parseGeoidHeight(s string) (float32, error) {
-	geoidHeight, err := strconv.ParseFloat(s, 32)
-	if err != nil {
-		return 0, fmt.Errorf("sentence segment [11] must be parsable as a float32 but was \"%v\"", s)
-	}
-
-	return float32(geoidHeight), nil
-}
-
-func parseGeoidHeightUom(s string) (string, error) {
-	var geoidHeightUom string
-	if s == "M" {
-		geoidHeightUom = s
-	} else {
-		return "", fmt.Errorf("sentence segment [12] must be \"M\" (case insensitive) but was \"%v\"", s)
-	}
-
-	return geoidHeightUom, nil
-}
-
-func parseDgpsUpdateAge(s string) (int32, error) {
-	var dgpsUpdateAge int32
-	if s == "" {
-		dgpsUpdateAge = 0
-	} else if v, err := strconv.ParseInt(s, 10, 32); err != nil {
-		return 0, fmt.Errorf("sentence segment [13] must be parsable as an int32 but was \"%v\"", s)
-	} else {
-		dgpsUpdateAge = int32(v)
-	}
-
-	return dgpsUpdateAge, nil
-}
-
-func parseDgpsStationID(s string) (int16, error) {
-	var dgpsStationID int16
-	if s == "" {
-		dgpsStationID = 0
-	} else if v, err := strconv.ParseInt(s, 10, 32); err != nil {
-		return 0, fmt.Errorf("sentence segment [14] must be parsable as an int16 but was \"%v\"", s)
-	} else {
-		dgpsStationID = int16(v)
-	}
-
-	return dgpsStationID, nil
 }
