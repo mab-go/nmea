@@ -1,0 +1,53 @@
+{
+    "$GPGGA,174800.864,4002.741,N,07618.550,W,1,12,1.0,0.0,M,0.0,M,,*70": {
+        "_Title": "NMEA Generator (Item 01)",
+        "FixTime": 174800.864,
+        "Latitude": 4002.741,
+        "NorthSouth": "N",
+        "Longitude": 7618.55,
+        "EastWest": "W",
+        "FixQuality": 1,
+        "SatCount": 12,
+        "Hdop": 1,
+        "Altitude": 0,
+        "AltitudeUom": "M",
+        "GeoidHeight": 0,
+        "GeoidHeightUom": "M",
+        "DgpsUpdateAge": null,
+        "DgpsStationID": null
+    },
+    "$GPGGA,183730,3907.356,N,12102.482,W,1,05,1.6,646.4,M,-24.1,M,300,123*76": {
+        "_Title": "Garmin G12 (v 4.57)",
+        "FixTime": 183730,
+        "Latitude": 3907.356,
+        "NorthSouth": "N",
+        "Longitude": 12102.482,
+        "EastWest": "W",
+        "FixQuality": 1,
+        "SatCount": 5,
+        "Hdop": 1.6,
+        "Altitude": 646.4,
+        "AltitudeUom": "M",
+        "GeoidHeight": -24.1,
+        "GeoidHeightUom": "M",
+        "DgpsUpdateAge": 300,
+        "DgpsStationID": 123
+    },
+    "$GPGGA,002454,3553.5295,N,13938.6570,E,1,05,2.2,18.3,M,39.0,M,,*7F": {
+        "_Title": "Garmin eTrex Summit",
+        "FixTime": 2454,
+        "Latitude": 3553.5295,
+        "NorthSouth": "N",
+        "Longitude": 13938.657,
+        "EastWest": "E",
+        "FixQuality": 1,
+        "SatCount": 5,
+        "Hdop": 2.2,
+        "Altitude": 18.3,
+        "AltitudeUom": "M",
+        "GeoidHeight": 39,
+        "GeoidHeightUom": "M",
+        "DgpsUpdateAge": null,
+        "DgpsStationID": null
+    }
+}

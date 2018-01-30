@@ -1,0 +1,87 @@
+[
+    {
+        "_Title": "Bad SentenceType",
+        "Sentence": "$GAAAA,174800.864,4002.741,N,07618.550,W,1,12,1.0,0.0,M,0.0,M,,*61",
+        "ErrMsg": "sentence segment [0] must be \"GPGGA\" but was \"GAAAA\""
+    },
+    {
+        "_Title": "Bad FixTime",
+        "Sentence": "$GPGGA,bad_FixTime,4002.741,N,07618.550,W,1,12,1.0,0.0,M,0.0,M,,*34",
+        "ErrMsg": "sentence segment [1] must be parsable as a float32 but was \"BAD_FIXTIME\""
+    },
+    {
+        "_Title": "Bad Latitude",
+        "Sentence": "$GPGGA,174800.864,bad_Latitude,N,07618.550,W,1,12,1.0,0.0,M,0.0,M,,*62",
+        "ErrMsg": "sentence segment [2] must be parsable as a float64 but was \"BAD_LATITUDE\""
+    },
+    {
+        "_Title": "Bad NorthSouth",
+        "Sentence": "$GPGGA,174800.864,4002.741,bad_NorthSouth,07618.550,W,1,12,1.0,0.0,M,0.0,M,,*1C",
+        "ErrMsg": "sentence segment [3] must be \"N\" or \"S\" (case insensitive) but was \"BAD_NORTHSOUTH\""
+    },
+    {
+        "_Title": "Bad Longitude",
+        "Sentence": "$GPGGA,174800.864,4002.741,N,bad_Longitude,W,1,12,1.0,0.0,M,0.0,M,,*2D",
+        "ErrMsg": "sentence segment [4] must be parsable as a float64 but was \"BAD_LONGITUDE\""
+    },
+    {
+        "_Title": "Bad EastWest",
+        "Sentence": "$GPGGA,174800.864,4002.741,N,07618.550,bad_EastWest,1,12,1.0,0.0,M,0.0,M,,*09",
+        "ErrMsg": "sentence segment [5] must be \"E\" or \"W\" (case insensitive) but was \"BAD_EASTWEST\""
+    },
+    {
+        "_Title": "Bad FixQuality (Wrong Type)",
+        "Sentence": "$GPGGA,174800.864,4002.741,N,07618.550,W,bad_FixQuality,12,1.0,0.0,M,0.0,M,,*63",
+        "ErrMsg": "sentence segment [6] must be parsable as an int8 but was \"BAD_FIXQUALITY\""
+    },
+    {
+        "_Title": "Bad FixQuality (Out of Range)",
+        "Sentence": "$GPGGA,174800.864,4002.741,N,07618.550,W,9,12,1.0,0.0,M,0.0,M,,*78",
+        "ErrMsg": "sentence segment [6] must be within 0..8 but was 9"
+    },
+    {
+        "_Title": "Bad FixQuality (Negative Number)",
+        "Sentence": "$GPGGA,174800.864,4002.741,N,07618.550,W,1,-2,1.0,0.0,M,0.0,M,,*6C",
+        "ErrMsg": "sentence segment [7] must not be negative but was -2"
+    },
+    {
+        "_Title": "Bad SatCount",
+        "Sentence": "$GPGGA,174800.864,4002.741,N,07618.550,W,1,bad_SatCount,1.0,0.0,M,0.0,M,,*4E",
+        "ErrMsg": "sentence segment [7] must be parsable as an int8 but was \"BAD_SATCOUNT\""
+    },
+    {
+        "_Title": "Bad HDOP",
+        "Sentence": "$GPGGA,174800.864,4002.741,N,07618.550,W,1,12,bad_HDOP,0.0,M,0.0,M,,*74",
+        "ErrMsg": "sentence segment [8] must be parsable as a float32 but was \"BAD_HDOP\""
+    },
+    {
+        "_Title": "Bad Altitude",
+        "Sentence": "$GPGGA,174800.864,4002.741,N,07618.550,W,1,12,1.0,bad_Altitude,M,0.0,M,,*56",
+        "ErrMsg": "sentence segment [9] must be parsable as a float32 but was \"BAD_ALTITUDE\""
+    },
+    {
+        "_Title": "Bad AltitudeUOM",
+        "Sentence": "$GPGGA,174800.864,4002.741,N,07618.550,W,1,12,1.0,0.0,bad_AltitudeUOM,0.0,M,,*62",
+        "ErrMsg": "sentence segment [10] must be \"M\" (case insensitive) but was \"BAD_ALTITUDEUOM\""
+    },
+    {
+        "_Title": "Bad GeoidHeight",
+        "Sentence": "$GPGGA,174800.864,4002.741,N,07618.550,W,1,12,1.0,0.0,M,bad_GeoidHeight,M,,*19",
+        "ErrMsg": "sentence segment [11] must be parsable as a float32 but was \"BAD_GEOIDHEIGHT\""
+    },
+    {
+        "_Title": "Bad GeoidHeightUOM",
+        "Sentence": "$GPGGA,174800.864,4002.741,N,07618.550,W,1,12,1.0,0.0,M,0.0,bad_GeoidHeightUOM,,*2D",
+        "ErrMsg": "sentence segment [12] must be \"M\" (case insensitive) but was \"BAD_GEOIDHEIGHTUOM\""
+    },
+    {
+        "_Title": "Bad DGPSUpdateAge",
+        "Sentence": "$GPGGA,174800.864,4002.741,N,07618.550,W,1,12,1.0,0.0,M,0.0,M,bad_DGPSUpdateAge,*3A",
+        "ErrMsg": "sentence segment [13] must be parsable as an int32 but was \"BAD_DGPSUPDATEAGE\""
+    },
+    {
+        "_Title": "Bad DGPSStationID",
+        "Sentence": "$GPGGA,174800.864,4002.741,N,07618.550,W,1,12,1.0,0.0,M,0.0,M,,bad_DGPSStationID*1F",
+        "ErrMsg": "sentence segment [14] must be parsable as an int16 but was \"BAD_DGPSSTATIONID\""
+    }
+]
