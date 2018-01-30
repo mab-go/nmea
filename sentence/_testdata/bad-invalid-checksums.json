@@ -1,0 +1,52 @@
+[
+    {
+        "Sentence": "$GPBOD,,T,,M,,*29",
+        "Checksum": "47",
+        "ErrMsg": "calculated checksum value \"47\" does not match expected value of \"29\""
+    },
+    {
+        "Sentence": "$GPGGA,002454,3553.5295,N,13938.6570,E,1,05,2.2,18.3,M,39.0,M,,*41",
+        "Checksum": "7F",
+        "ErrMsg": "calculated checksum value \"7F\" does not match expected value of \"41\""
+    },
+    {
+        "Sentence": "$GPGGA,023042,3907.3837,N,12102.4684,W,1,04,2.3,507.3,M,-24.1,M,,*DE",
+        "Checksum": "75",
+        "ErrMsg": "calculated checksum value \"75\" does not match expected value of \"DE\""
+    },
+    {
+        "Sentence": "$GPGGA,152926,6027.8259,N,02225.6713,E,8,09,2.0,44.7,M,20.6,M,,*FA",
+        "Checksum": "79",
+        "ErrMsg": "calculated checksum value \"79\" does not match expected value of \"FA\""
+    },
+    {
+        "Sentence": "$GPGGA,183730,3907.356,N,12102.482,W,1,05,1.6,646.4,M,-24.1,M,,*22",
+        "Checksum": "75",
+        "ErrMsg": "calculated checksum value \"75\" does not match expected value of \"22\""
+    },
+    {
+        "Sentence": "$GPGLL,3553.5295,N,13938.6570,E,002454,A,A*A1",
+        "Checksum": "4F",
+        "ErrMsg": "calculated checksum value \"4F\" does not match expected value of \"A1\""
+    },
+    {
+        "Sentence": "$GPGLL,3907.360,N,12102.481,W,183730,A*8E",
+        "Checksum": "33",
+        "ErrMsg": "calculated checksum value \"33\" does not match expected value of \"8E\""
+    },
+    {
+        "Sentence": "$GPGLL,3907.3837,N,12102.4684,W,023042,A,A*E7",
+        "Checksum": "5E",
+        "ErrMsg": "calculated checksum value \"5E\" does not match expected value of \"E7\""
+    },
+    {
+        "Sentence": "$GPGLL,6027.8259,N,02225.6713,E,152926,V,S*9A",
+        "Checksum": "48",
+        "ErrMsg": "calculated checksum value \"48\" does not match expected value of \"9A\""
+    },
+    {
+        "Sentence": "$GPGSA,A,3,01,04,07,16,20,,,,,,,,3.6,2.2,2.7*B1",
+        "Checksum": "35",
+        "ErrMsg": "calculated checksum value \"35\" does not match expected value of \"B1\""
+    }
+]
