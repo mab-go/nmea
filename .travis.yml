@@ -1,0 +1,23 @@
+language: go
+
+go:
+    - 1.8
+    - 1.9
+    - master
+
+go_import_path: gopkg.in/mab-go/nmea.v0
+
+matrix:
+    # Allow failures on unstable development versions of Go.
+    allow_failures:
+        - go: master
+
+    # Don't wait for tests on unstable development versions to finish. Mark the
+    # tests "green" if the tests pass on stable versions of Go.
+    fast_finish: true
+
+script:
+    - tools/test-cover.sh
+
+after_success:
+    - bash <(curl -s https://codecov.io/bash)
