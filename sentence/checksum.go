@@ -38,7 +38,10 @@ func VerifyChecksum(sentence string) error {
 			expectedHex := strings.ToUpper(fmt.Sprintf("%c%c", sentence[i+1], sentence[i+2]))
 			calculatedHex := fmt.Sprintf("%02X", calculated)
 			if calculatedHex != expectedHex {
-				return fmt.Errorf("calculated checksum value \"%v\" does not match expected value of \"%v\"", calculatedHex, expectedHex)
+				return fmt.Errorf(
+					"calculated checksum value \"%v\" does not match sentence-specified value of \"%v\"",
+					calculatedHex,
+					expectedHex)
 			}
 
 			return nil // No errors

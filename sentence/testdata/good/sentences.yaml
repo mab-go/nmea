@@ -1,0 +1,60 @@
+# ------------------------------------------------------------------------------
+# Test data obtained from http://www.gpsinformation.org/dale/nmea.htm#stream
+# ------------------------------------------------------------------------------
+
+# --- GPRMC Sentences ----------------------------------------------------------
+
+"GPRMC from Garmin G12 (v 4.57)":
+    Sentence: "$GPRMC,183729,A,3907.356,N,12102.482,W,000.0,360.0,080301,015.5,E*6F"
+    ActualChecksum: "6F"
+
+"GPRMC from Garmin eTrex Summit":
+    # Notes:
+    #     - Latitude and Longitude values have four (4) digits of precision
+    Sentence: "$GPRMC,002454,A,3553.5295,N,13938.6570,E,0.0,43.1,180700,7.1,W,A*3F"
+    ActualChecksum: "3F"
+
+"GPRMC from Magellan 315 (Simulation Mode)":
+    # Notes:
+    #     - Latitude and Longitude values have four (4) digits of precision
+    Sentence: "$GPRMC,104715.20,A,5100.2111,N,00500.0006,E,21.7,003.0,140801,01.,W*70"
+    ActualChecksum: "70"
+
+"GPRMC from Raytheon RN300":
+    Sentence: "$GPRMC,171537,A,3350.975,N,11823.991,W,0.0,096.5,060401,013.0,E,D*07"
+    ActualChecksum: "07"
+
+"GPRMC from NavMan 3400 (SiRF Chipset)":
+    # Notes:
+    #     - Latitude and Longitude values have four (4) digits of precision
+    Sentence: "$GPRMC,230611.016,V,3907.3813,N,12102.4635,W,0.14,136.40,041002,,*04"
+    ActualChecksum: "04"
+
+# --- GPGGA Sentences ----------------------------------------------------------
+
+"GPGGA from Garmin G12 (v 4.57)":
+    Sentence: "$GPGGA,183730,3907.356,N,12102.482,W,1,05,1.6,646.4,M,-24.1,M,,*75"
+    ActualChecksum: "75"
+
+"GPGGA from Garmin eTrex Summit":
+    # Notes:
+    #     - Latitude and Longitude values have four (4) digits of precision
+    Sentence: "$GPGGA,002454,3553.5295,N,13938.6570,E,1,05,2.2,18.3,M,39.0,M,,*7F"
+    ActualChecksum: "7F"
+
+"GPGGA from Magellan 315 (Simulation Mode)":
+    # Notes:
+    #     - Latitude and Longitude values have four (4) digits of precision
+    Sentence: "$GPGGA,104715.20,5100.2111,N,00500.0006,E,1,04,2.0,-0047,M,,,,*39"
+    ActualChecksum: "39"
+
+"GPGGA from Raytheon RN300":
+    Sentence: "$GPGGA,171537,3350.975,N,11823.991,W,2,07,1.1,-25.8,M,,M,1.8,,D*17"
+    ActualChecksum: "17"
+
+"GPGGA from NavMan 3400 (SiRF Chipset)":
+    # Notes:
+    #     - The ",0000" at the end of this sentence is non standard
+    #     - Latitude and Longitude values have four (4) digits of precision
+    Sentence: "$GPGGA,230611.016,3907.3813,N,12102.4635,W,0,04,5.7,507.9,M,,,,0000*11"
+    ActualChecksum: "11"

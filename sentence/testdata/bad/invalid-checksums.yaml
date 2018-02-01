@@ -1,0 +1,53 @@
+# --- GPRMC Sentences ----------------------------------------------------------
+
+"GPRMC with bogus checksum [1/5]":
+    Sentence: "$GPRMC,183729,A,3907.356,N,12102.482,W,000.0,360.0,080301,015.5,E*A1"
+    ActualChecksum: "6F"
+    AdvertisedChecksum: "A1"
+
+"GPRMC with bogus checksum [2/5]":
+    Sentence: "$GPRMC,002454,A,3553.5295,N,13938.6570,E,0.0,43.1,180700,7.1,W,A*B2"
+    ActualChecksum: "3F"
+    AdvertisedChecksum: "B2"
+
+"GPRMC with bogus checksum [3/5]":
+    Sentence: "$GPRMC,104715.20,A,5100.2111,N,00500.0006,E,21.7,003.0,140801,01.,W*C3"
+    ActualChecksum: "70"
+    AdvertisedChecksum: "C3"
+
+"GPRMC with bogus checksum [4/5]":
+    Sentence: "$GPRMC,171537,A,3350.975,N,11823.991,W,0.0,096.5,060401,013.0,E,D*D4"
+    ActualChecksum: "07"
+    AdvertisedChecksum: "D4"
+
+"GPRMC with bogus checksum [5/5]":
+    Sentence: "$GPRMC,230611.016,V,3907.3813,N,12102.4635,W,0.14,136.40,041002,,*E5"
+    ActualChecksum: "04"
+    AdvertisedChecksum: "E5"
+
+# --- GPGGA Sentences ----------------------------------------------------------
+
+"GPGGA with bogus checksum [1/5]":
+    Sentence: "$GPGGA,183730,3907.356,N,12102.482,W,1,05,1.6,646.4,M,-24.1,M,,*A1"
+    ActualChecksum: "75"
+    AdvertisedChecksum: "A1"
+
+"GPGGA with bogus checksum [2/5]":
+    Sentence: "$GPGGA,002454,3553.5295,N,13938.6570,E,1,05,2.2,18.3,M,39.0,M,,*B2"
+    ActualChecksum: "7F"
+    AdvertisedChecksum: "B2"
+
+"GPGGA with bogus checksum [3/5]":
+    Sentence: "$GPGGA,104715.20,5100.2111,N,00500.0006,E,1,04,2.0,-0047,M,,,,*C3"
+    ActualChecksum: "39"
+    AdvertisedChecksum: "C3"
+
+"GPGGA with bogus checksum [4/5]":
+    Sentence: "$GPGGA,171537,3350.975,N,11823.991,W,2,07,1.1,-25.8,M,,M,1.8,,D*D4"
+    ActualChecksum: "17"
+    AdvertisedChecksum: "D4"
+
+"GPGGA with bogus checksum [5/5]":
+    Sentence: "$GPGGA,230611.016,3907.3813,N,12102.4635,W,0,04,5.7,507.9,M,,,,0000*E5"
+    ActualChecksum: "11"
+    AdvertisedChecksum: "E5"

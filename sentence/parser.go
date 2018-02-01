@@ -80,21 +80,7 @@ func (p *SegmentParser) AsFloat64(i int8) float64 {
 // AsInt8 parses the sentence segment at the specified index as an int8 value.
 // If p.Err() is not nil, this function returns 0 and leaves the error unchanged.
 func (p *SegmentParser) AsInt8(i int8) int8 {
-	if p.checkInRange(i); p.err != nil {
-		return 0
-	}
-
-	if p.segments[i] == "" {
-		return 0
-	} else if val, err := strconv.ParseInt(p.segments[i], 10, 8); err != nil {
-		p.err = &ParsingError{
-			Segment: i,
-			Message: fmt.Sprintf("must be parsable as an int8 but was \"%s\"", p.segments[i]),
-		}
-		return 0
-	} else {
-		return int8(val)
-	}
+	return p.asInt(i, 8).(int8)
 }
 
 // AsInt8InRange parses the sentence segment at the specified index as an int8
@@ -125,41 +111,13 @@ func (p *SegmentParser) AsInt8InRange(i int8, l int8, u int8) int8 {
 // AsInt16 parses the sentence segment at the specified index as an int32 value.
 // If p.Err() is not nil, this function returns 0 and leaves the error unchanged.
 func (p *SegmentParser) AsInt16(i int8) int16 {
-	if p.checkInRange(i); p.err != nil {
-		return 0
-	}
-
-	if p.segments[i] == "" {
-		return 0
-	} else if val, err := strconv.ParseInt(p.segments[i], 10, 16); err != nil {
-		p.err = &ParsingError{
-			Segment: i,
-			Message: fmt.Sprintf("must be parsable as an int16 but was \"%s\"", p.segments[i]),
-		}
-		return 0
-	} else {
-		return int16(val)
-	}
+	return p.asInt(i, 16).(int16)
 }
 
 // AsInt32 parses the sentence segment at the specified index as an int32 value.
 // If p.Err() is not nil, this function returns 0 and leaves the error unchanged.
 func (p *SegmentParser) AsInt32(i int8) int32 {
-	if p.checkInRange(i); p.err != nil {
-		return 0
-	}
-
-	if p.segments[i] == "" {
-		return 0
-	} else if val, err := strconv.ParseInt(p.segments[i], 10, 32); err != nil {
-		p.err = &ParsingError{
-			Segment: i,
-			Message: fmt.Sprintf("must be parsable as an int32 but was \"%s\"", p.segments[i]),
-		}
-		return 0
-	} else {
-		return int32(val)
-	}
+	return p.asInt(i, 32).(int32)
 }
 
 // RequireString parses the sentence segment at the specified index as a string
@@ -207,6 +165,39 @@ func (p *SegmentParser) RequireStrings(i int8, s []string) string {
 }
 
 // --- Private -----------------------------------------------------------------
+
+func (p *SegmentParser) asInt(i int8, bitSize int) interface{} {
+	if p.err != nil {
+		return 0 // There's already an error; exit early.
+	}
+
+	if p.checkInRange(i); p.err != nil {
+		return 0
+	}
+
+	if p.segments[i] == "" {
+		return 0
+	} else if val, err := strconv.ParseInt(p.segments[i], 10, bitSize); err != nil {
+		p.err = &ParsingError{
+			Segment: i,
+			Message: fmt.Sprintf("must be parsable as an int%d but was \"%s\"", bitSize, p.segments[i]),
+		}
+		return 0
+	} else {
+		switch bitSize {
+		case 8:
+			return int8(val)
+		case 16:
+			return int16(val)
+		case 32:
+			return int32(val)
+		case 64:
+			return val // Type is already int64
+		}
+	}
+
+	panic("should have returned (but did not) because bitSize was " + string(bitSize))
+}
 
 func (p *SegmentParser) checkInRange(i int8) {
 	if p.err != nil {
