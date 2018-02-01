@@ -23,6 +23,7 @@ func readTestData(path string, data interface{}) {
 
 // --- Test Functions ----------------------------------------------------------
 
+// nolint: gocyclo
 func TestParseGPGGA_goodData(t *testing.T) {
 	type expectedGpgga struct {
 		GPGGA

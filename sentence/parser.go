@@ -17,7 +17,7 @@ type SegmentParser struct {
 }
 
 // Parse parses the specified NMEA sentence into a series of sentence segments.
-func (p *SegmentParser) Parse(s string) (error) {
+func (p *SegmentParser) Parse(s string) error {
 	if err := VerifyChecksum(s); err != nil {
 		return err
 	}

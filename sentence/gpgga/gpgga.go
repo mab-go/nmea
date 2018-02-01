@@ -8,8 +8,13 @@ import (
 
 // --- Public ------------------------------------------------------------------
 
+// @formatter:off
+
 // GPGGA represents an NMEA sentence of type "GPGGA".
-type GPGGA struct {
+type GPGGA struct { // nolint: maligned
+
+	// @formatter:on
+
 	// FixTime is the time at which the GPS fix was acquired. The format is
 	// (h)hmmss.sss. For example, the value 174831.864 represents the time
 	// 17:48:31.864. It is element [1] of a GPGGA sentence.
