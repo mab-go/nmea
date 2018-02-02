@@ -80,6 +80,11 @@ func (p *SegmentParser) AsFloat64(i int8) float64 {
 // AsInt8 parses the sentence segment at the specified index as an int8 value.
 // If p.Err() is not nil, this function returns 0 and leaves the error unchanged.
 func (p *SegmentParser) AsInt8(i int8) int8 {
+	val := p.asInt(i, 8)
+	if val == 0 {
+		return int8(val.(int))
+	}
+
 	return p.asInt(i, 8).(int8)
 }
 
@@ -111,12 +116,22 @@ func (p *SegmentParser) AsInt8InRange(i int8, l int8, u int8) int8 {
 // AsInt16 parses the sentence segment at the specified index as an int32 value.
 // If p.Err() is not nil, this function returns 0 and leaves the error unchanged.
 func (p *SegmentParser) AsInt16(i int8) int16 {
+	val := p.asInt(i, 16)
+	if val == 0 {
+		return int16(val.(int))
+	}
+
 	return p.asInt(i, 16).(int16)
 }
 
 // AsInt32 parses the sentence segment at the specified index as an int32 value.
 // If p.Err() is not nil, this function returns 0 and leaves the error unchanged.
 func (p *SegmentParser) AsInt32(i int8) int32 {
+	val := p.asInt(i, 32)
+	if val == 0 {
+		return int32(val.(int))
+	}
+
 	return p.asInt(i, 32).(int32)
 }
 

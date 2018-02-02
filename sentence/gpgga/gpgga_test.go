@@ -110,7 +110,7 @@ func TestParseGPGGA_invalidChecksum(t *testing.T) {
 		t.Errorf("result should have been <nil> but was %v", gpgga)
 	}
 
-	expected := "calculated checksum value \"70\" does not match expected value of \"42\""
+	expected := "calculated checksum value \"70\" does not match sentence-specified value of \"42\""
 	if err.Error() != expected {
 		t.Errorf("error message should have been '%v' but was '%v'", expected, err.Error())
 	}
