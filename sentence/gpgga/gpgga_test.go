@@ -19,7 +19,8 @@ func mapTestData(title string, input map[string]interface{}) interface{} {
 		ErrMsg:   testhelp.AsStringOrDefault(input["ErrMsg"], ""),
 
 		GPGGA: GPGGA{
-			FixTime:        float32(input["FixTime"].(float64)),
+			// FixTime:        float32(input["FixTime"].(float64)),
+			FixTime:        testhelp.EnsureFloat32(input["FixTime"]),
 			Latitude:       input["Latitude"].(float64),
 			NorthSouth:     NorthSouth(input["NorthSouth"].(string)),
 			Longitude:      input["Longitude"].(float64),
@@ -31,7 +32,7 @@ func mapTestData(title string, input map[string]interface{}) interface{} {
 			AltitudeUOM:    input["AltitudeUOM"].(string),
 			GeoidHeight:    float32(input["GeoidHeight"].(float64)),
 			GeoidHeightUOM: input["GeoidHeightUOM"].(string),
-			DGPSUpdateAge:  float32(testhelp.AsFloat64OrDefault(input["DGPSUpdateAge"], 0)),
+			DGPSUpdateAge:  testhelp.OptFloat32(input["DGPSUpdateAge"]),
 			DGPSStationID:  int16(testhelp.AsIntOrDefault(input["DGPSStationID"], 0)),
 		},
 	}

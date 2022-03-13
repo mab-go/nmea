@@ -10,14 +10,33 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// AsFloat64OrDefault attempts to cast v as an float64. If the cast fails, it returns
-// the default value of d.
-func AsFloat64OrDefault(v interface{}, d float64) float64 {
+// EnsureFloat32 attempts to cast v as a float64, then converts it to a float32. If the cast fails,
+// a runtime panic occurs.
+func EnsureFloat32(v interface{}) float32 {
+	f := EnsureFloat64(v)
+	return float32(f)
+}
+
+// OptFloat32 attempts to cast v as a float64, then converts it to a float32. If the cast fails,
+// it returns the type's zero-value (0).
+func OptFloat32(v interface{}) float32 {
+	f := OptFloat64(v)
+	return float32(f)
+}
+
+// EnsureFloat64 attempts to cast v as a float64. If the cast fails, a runtime panic occurs.
+func EnsureFloat64(v interface{}) float64 {
+	return v.(float64)
+}
+
+// OptFloat64 attempts to cast v as a float64. If the cast fails, it returns
+// the type's zero-value (0).
+func OptFloat64(v interface{}) float64 {
 	if f, ok := v.(float64); ok {
 		return f
 	}
 
-	return d
+	return 0
 }
 
 // AsIntOrDefault attempts to cast v as an int. If the cast fails, it returns
