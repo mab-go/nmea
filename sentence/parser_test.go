@@ -25,18 +25,10 @@ func sortParseTestData(result []interface{}, i, j int) bool {
 	return result[i].(parseTestData).Title < result[j].(parseTestData).Title
 }
 
-func readParseTestData(name string) []parseTestData {
-	data := testhelp.ReadTestData(name, mapParseTestData, sortParseTestData)
-	var dd []parseTestData
-	for _, d := range data {
-		dd = append(dd, d.(parseTestData))
-	}
-
-	return dd
-}
-
 func TestSegmentParser_Parse_goodData(t *testing.T) {
-	for _, d := range readParseTestData("good/sentences") {
+	for _, data := range testhelp.ReadTestData("good-data", mapParseTestData, sortParseTestData) {
+		d := data.(parseTestData)
+
 		t.Run(d.Title, func(t *testing.T) {
 			parser := &SegmentParser{}
 			err := parser.Parse(d.Sentence) // Unit under test
@@ -48,7 +40,9 @@ func TestSegmentParser_Parse_goodData(t *testing.T) {
 }
 
 func TestSegmentParser_Parse_invalidChecksums(t *testing.T) {
-	for _, d := range readParseTestData("bad/invalid-checksums") {
+	for _, data := range testhelp.ReadTestData("bad-invalid-checksums", mapParseTestData, sortParseTestData) {
+		d := data.(parseTestData)
+
 		t.Run(d.Title, func(t *testing.T) {
 			parser := &SegmentParser{}
 			err := parser.Parse(d.Sentence) // Unit under test

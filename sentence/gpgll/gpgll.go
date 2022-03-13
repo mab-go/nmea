@@ -35,7 +35,6 @@ const (
 // "V" (invalid).
 type DataStatus string
 
-//goland:noinspection GoUnusedConst
 const (
 	// ValidDataStatus represents a valid GPS fix.
 	ValidDataStatus DataStatus = "A"
@@ -112,3 +111,26 @@ func (g GPGLL) GetSentenceType() string {
 
 // Ensure that GPGLL properly implements the NMEASentence interface
 var _ sentence.NMEASentence = GPGLL{}
+
+// ParseGPGLL parses a GPGLL sentence string and returns a pointer to a GPGLL struct (or an error if
+// the sentence is invalid).
+func ParseGPGLL(s string) (*GPGLL, error) {
+	segments := &sentence.SegmentParser{}
+	if err := segments.Parse(s); err != nil {
+		return nil, err
+	}
+
+	northSouth := []string{string(North), string(South)}
+	eastWest := []string{string(East), string(West)}
+
+	_ = segments.RequireString(0, "GPGGA") // Verify sentence type
+	gpgll := &GPGLL{
+		Latitude:   segments.AsFloat64(1),
+		NorthSouth: NorthSouth(segments.RequireStrings(2, northSouth)),
+		Longitude:  segments.AsFloat64(3),
+		EastWest:   EastWest(segments.RequireStrings(4, eastWest)),
+		FixTime:    segments.AsFloat32(1),
+		DataStatus: false,
+		Mode:       false,
+	}
+}

@@ -25,18 +25,10 @@ func sortChecksumTestData(result []interface{}, i, j int) bool {
 	return result[i].(checksumTestData).Title < result[j].(checksumTestData).Title
 }
 
-func readChecksumTestData(name string) []checksumTestData {
-	data := testhelp.ReadTestData(name, mapChecksumTestData, sortChecksumTestData)
-	var dd []checksumTestData
-	for _, d := range data {
-		dd = append(dd, d.(checksumTestData))
-	}
-
-	return dd
-}
-
 func TestVerifyChecksum_goodData(t *testing.T) {
-	for _, d := range readChecksumTestData("good/sentences") {
+	for _, data := range testhelp.ReadTestData("good-data", mapChecksumTestData, sortChecksumTestData) {
+		d := data.(checksumTestData)
+
 		t.Run(d.Title, func(t *testing.T) {
 			err := VerifyChecksum(d.Sentence)
 			if err != nil {
@@ -47,8 +39,7 @@ func TestVerifyChecksum_goodData(t *testing.T) {
 }
 
 func TestVerifyChecksum_invalidChecksums(t *testing.T) {
-	badChecksumData := testhelp.ReadTestData("bad/invalid-checksums", mapChecksumTestData, sortChecksumTestData)
-	for _, data := range badChecksumData {
+	for _, data := range testhelp.ReadTestData("bad-invalid-checksums", mapChecksumTestData, sortChecksumTestData) {
 		d := data.(checksumTestData)
 
 		t.Run(d.Title, func(t *testing.T) {
@@ -69,8 +60,7 @@ func TestVerifyChecksum_invalidChecksums(t *testing.T) {
 }
 
 func TestVerifyChecksum_malformedData(t *testing.T) {
-	malformedData := testhelp.ReadTestData("bad/malformed", mapChecksumTestData, sortChecksumTestData)
-	for _, data := range malformedData {
+	for _, data := range testhelp.ReadTestData("bad-malformed", mapChecksumTestData, sortChecksumTestData) {
 		d := data.(checksumTestData)
 
 		t.Run(d.Title, func(t *testing.T) {

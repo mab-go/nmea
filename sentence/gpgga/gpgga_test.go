@@ -49,7 +49,7 @@ func sortTestData(result []interface{}, i, j int) bool {
 
 // nolint: gocyclo
 func TestParseGPGGA_goodData(t *testing.T) {
-	for _, d := range testhelp.ReadTestData("good/sentences", mapGoodTestData, sortTestData) {
+	for _, d := range testhelp.ReadTestData("good-data", mapGoodTestData, sortTestData) {
 		expected := d.(testData)
 
 		t.Run(expected.Title, func(t *testing.T) {
@@ -136,7 +136,7 @@ func TestParseGPGGA_invalidChecksum(t *testing.T) {
 }
 
 func TestParseGPGGA_badSegments(t *testing.T) {
-	for i, d := range testhelp.ReadTestData("bad/invalid-segments", mapBadTestData, sortTestData) {
+	for i, d := range testhelp.ReadTestData("bad-invalid-segments", mapBadTestData, sortTestData) {
 		expected := d.(testData)
 
 		t.Run(expected.Title, func(t *testing.T) {

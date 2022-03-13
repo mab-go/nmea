@@ -1,4 +1,4 @@
-"NMEA Generator (Item 01)":
+"NMEA Generator [1/1]":
     Sentence: "$GPGGA,174800.864,4002.741,N,07618.550,W,1,12,1.0,0.0,M,0.0,M,,*70"
     FixTime: 174800.864
     Latitude: 4002.741

@@ -156,6 +156,7 @@ func ParseGPGGA(s string) (*GPGGA, error) {
 
 	northSouth := []string{string(North), string(South)}
 	eastWest := []string{string(East), string(West)}
+	// dataStatuses := []string{string()}
 
 	_ = segments.RequireString(0, "GPGGA") // Verify sentence type
 	gpgga := &GPGGA{
