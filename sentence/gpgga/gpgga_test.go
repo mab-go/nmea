@@ -22,7 +22,7 @@ func mapGoodTestData(title string, input map[string]interface{}) interface{} {
 			NorthSouth:     NorthSouth(testhelp.EnsureString(input["NorthSouth"])),
 			Longitude:      testhelp.EnsureFloat64(input["Longitude"]),
 			EastWest:       EastWest(testhelp.EnsureString(input["EastWest"])),
-			FixQuality:     testhelp.EnsureInt8(input["FixQuality"]),
+			FixQuality:     FixQuality(testhelp.EnsureInt8(input["FixQuality"])),
 			SatCount:       testhelp.EnsureInt8(input["SatCount"]),
 			HDOP:           testhelp.EnsureFloat32(input["HDOP"]),
 			Altitude:       testhelp.EnsureFloat32(input["Altitude"]),

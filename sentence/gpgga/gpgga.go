@@ -30,6 +30,39 @@ const (
 	West EastWest = "W"
 )
 
+// FixQuality indicates the type/quality of a GPS fix.
+type FixQuality int8
+
+//goland:noinspection GoUnusedConst
+const (
+	// InvalidFixQuality represents an invalid GPS fix quality. Its value is 0.
+	InvalidFixQuality FixQuality = 0
+
+	// GPSFixQuality represents a standard GPS fix quality. Its value is 1.
+	GPSFixQuality FixQuality = 1
+
+	// DGPSFixQuality represents a differential GPS (DGPS) fix quality. Its value is 2.
+	DGPSFixQuality FixQuality = 2
+
+	// PPSFixQuality represents a precise positioning system (PPS) fix quality. Its value is 3.
+	PPSFixQuality FixQuality = 3
+
+	// RTKFixQuality represents a Real Time Kinematic fix quality. Its value is 4.
+	RTKFixQuality FixQuality = 4
+
+	// FloatRTKFixQuality represents a Float Real Time Kinematic fix quality. Its value is 5.
+	FloatRTKFixQuality FixQuality = 5
+
+	// EstimatedFixQuality represents an estimated (dead reckoning) fix quality. Its value is 6.
+	EstimatedFixQuality FixQuality = 6
+
+	// ManualInputFixQuality represents a "manual input mode" fix quality. Its value is 7.
+	ManualInputFixQuality FixQuality = 7
+
+	// SimulationFixQuality represents a "simulation mode" fix quality. Its value is 8.
+	SimulationFixQuality FixQuality = 8
+)
+
 // @formatter:off
 
 // GPGGA represents an NMEA sentence of type "GPGGA".
@@ -47,8 +80,8 @@ type GPGGA struct { // nolint: maligned
 	// sentence.
 	Latitude float64
 
-	// NorthSouth indicates the hemisphere in which the latitude value resides. It can be either
-	// "N" or "S". It is element [3] of a GPGGA sentence.
+	// NorthSouth indicates the hemisphere in which the latitude value resides. It is element [3] of
+	// a GPGGA sentence.
 	NorthSouth NorthSouth
 
 	// Longitude is the "longitude" component of a GPS fix. The format is (d)ddmm.mmmm. For example,
@@ -56,23 +89,12 @@ type GPGGA struct { // nolint: maligned
 	// sentence.
 	Longitude float64
 
-	// EastWest indicates the hemisphere in which the longitude value resides. It can be either "E"
-	// or "W". It is element [5] of a GPGGA sentence.
+	// EastWest indicates the hemisphere in which the longitude value resides. It is element [5] of
+	// a GPGGA sentence.
 	EastWest EastWest
 
 	// FixQuality indicates the type/quality of the GPS fix. It is element [6] of a GPGGA sentence.
-	//
-	// The following values are valid:
-	//     0 = Invalid
-	//     1 = GPS fix (SPS)
-	//     2 = DGPS fix
-	//     3 = PPS fix
-	//     4 = Real Time Kinematic
-	//     5 = Float RTK
-	//     6 = Estimated (dead reckoning) (NMEA 2.3 feature)
-	//     7 = Manual input mode
-	//     8 = Simulation mode
-	FixQuality int8
+	FixQuality FixQuality
 
 	// SatCount is the number of satellites used to obtain the GPS fix. It is element [7] of a GPGGA
 	// sentence.
@@ -142,7 +164,7 @@ func ParseGPGGA(s string) (*GPGGA, error) {
 		NorthSouth:     NorthSouth(segments.RequireStrings(3, northSouth)),
 		Longitude:      segments.AsFloat64(4),
 		EastWest:       EastWest(segments.RequireStrings(5, eastWest)),
-		FixQuality:     segments.AsInt8InRange(6, 0, 8),
+		FixQuality:     FixQuality(segments.AsInt8InRange(6, 0, 8)),
 		SatCount:       segments.AsInt8(7),
 		HDOP:           segments.AsFloat32(8),
 		Altitude:       segments.AsFloat32(9),
