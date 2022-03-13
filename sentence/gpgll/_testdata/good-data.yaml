@@ -1,39 +1,39 @@
 "NMEA Simulator [1/4]":
     Sentence: "$GPGLL,3157.905722,S,11551.681852,E,215052.603,A*27"
-    Latitude: "?"
-    NorthSouth: "?"
-    Longitude: "?"
+    Latitude: 157.905722
+    NorthSouth: "S"
+    Longitude: 11551.681852
     EastWest: "?"
-    FixTime: "?"
+    FixTime: 215052.603
     DataStatus: "?"
     Mode: "?"
 
 "NMEA Simulator [2/4]":
     Sentence: "$GPGLL,3157.905722,S,11551.681852,E,215102.604,A*24"
-    Latitude: "?"
-    NorthSouth: "?"
-    Longitude: "?"
+    Latitude: 3157.905722
+    NorthSouth: "S"
+    Longitude: 11551.681852
     EastWest: "?"
-    FixTime: "?"
+    FixTime: 215102.604
     DataStatus: "?"
     Mode: "?"
 
 "NMEA Simulator [3/4]":
     Sentence: "$GPGLL,3726.489023,N,12212.446039,W,214827.478,A*2D"
-    Latitude: "?"
-    NorthSouth: "?"
-    Longitude: "?"
+    Latitude: 3726.489023
+    NorthSouth: "N"
+    Longitude: 12212.446039
     EastWest: "?"
-    FixTime: "?"
+    FixTime: 214827.478
     DataStatus: "?"
     Mode: "?"
 
 "NMEA Simulator [4/4]":
     Sentence: "$GPGLL,3726.489023,N,12212.446039,W,214916.479,A*2F"
-    Latitude: "?"
-    NorthSouth: "?"
-    Longitude: "?"
+    Latitude: 3726.489023
+    NorthSouth: "N"
+    Longitude: 12212.446039
     EastWest: "?"
-    FixTime: "?"
+    FixTime: 214916.479
     DataStatus: "?"
     Mode: "?"

@@ -1,22 +1,26 @@
 // Package gpgll contains data structures and functions related to NMEA sentences
 // of type "GPGLL".
 package gpgll // import "gopkg.in/mab-go/nmea.v0/sentence/gpgll"
+
 import (
+	"fmt"
+
 	"gopkg.in/mab-go/nmea.v0/sentence"
 )
 
 // NorthSouth indicates the hemisphere in which a latitude value resides. It can be either
 // "N" or "S".
-type NorthSouth string
+type NorthSouth int
 
-//goland:noinspection GoUnusedConst
 const (
 	// North represents the northern hemisphere.
-	North NorthSouth = "N"
+	North NorthSouth = iota
 
 	// South represents the southern hemisphere.
-	South NorthSouth = "S"
+	South
 )
+
+//go:generate enumer -type=NorthSouth -text -sql -json -yaml -transform=first-upper -output=enum_northsouth_gen.go
 
 // EastWest indicates the hemisphere in which a longitude value resides. It can be either
 // "E" or "W".
@@ -120,17 +124,38 @@ func ParseGPGLL(s string) (*GPGLL, error) {
 		return nil, err
 	}
 
-	northSouth := []string{string(North), string(South)}
+	fmt.Printf("[0] segments.Err(): %#v\n", segments.Err())
+
+	nsStr := segments.RequireStrings(2, NorthSouthStrings())
+	fmt.Printf("[1] segments.Err(): %#v\n", segments.Err())
+
+	northSouth, err := NorthSouthString(nsStr)
+	if err != nil {
+		panic(err)
+		return nil, err // fmt.Errorf("parse NorthSouth: %w", err)
+	}
+
+	fmt.Printf("northSouth: %#v\n", northSouth)
+
 	eastWest := []string{string(East), string(West)}
 
-	_ = segments.RequireString(0, "GPGGA") // Verify sentence type
+	_ = segments.RequireString(0, "GPGLL") // Verify sentence type
+	fmt.Printf("[2] segments.Err(): %#v\n", segments.Err())
 	gpgll := &GPGLL{
 		Latitude:   segments.AsFloat64(1),
-		NorthSouth: NorthSouth(segments.RequireStrings(2, northSouth)),
+		NorthSouth: northSouth,
 		Longitude:  segments.AsFloat64(3),
 		EastWest:   EastWest(segments.RequireStrings(4, eastWest)),
 		FixTime:    segments.AsFloat32(1),
-		DataStatus: false,
-		Mode:       false,
+		// DataStatus: false,
+		// Mode:       false,
 	}
+
+	fmt.Printf("[3] segments.Err(): %#v\n", segments.Err())
+	if err := segments.Err(); err != nil {
+		return nil, err
+	}
+
+	fmt.Printf("[4] segments.Err(): %#v\n", segments.Err())
+	return gpgll, nil
 }
