@@ -7,12 +7,12 @@ import (
 	"gopkg.in/mab-go/nmea.v0/sentence/testhelp"
 )
 
-type testParseInput struct {
+type parseTestData struct {
 	Name, Sentence, ActualChecksum, AdvertisedChecksum, ErrMsg string
 }
 
-func mapParseInput(title string, input map[string]string) interface{} {
-	return testParseInput{
+func mapParseTestData(title string, input map[string]string) interface{} {
+	return parseTestData{
 		Name:               title,
 		Sentence:           input["Sentence"],
 		ActualChecksum:     input["ActualChecksum"],
@@ -21,17 +21,23 @@ func mapParseInput(title string, input map[string]string) interface{} {
 	}
 }
 
-func sortParseInput(result []interface{}, i, j int) bool {
-	return result[i].(testParseInput).Name < result[j].(testParseInput).Name
+func sortParseTestData(result []interface{}, i, j int) bool {
+	return result[i].(parseTestData).Name < result[j].(parseTestData).Name
 }
 
-func TestSegmentParser_Parse(t *testing.T) {
-	// Test with good data
-	goodData := testhelp.ReadTestData("good/sentences", mapParseInput, sortParseInput)
-	for _, data := range goodData {
-		d := data.(testParseInput)
+func readParseTestData(name string) []parseTestData {
+	data := testhelp.ReadTestData(name, mapParseTestData, sortParseTestData)
+	var dd []parseTestData
+	for _, d := range data {
+		dd = append(dd, d.(parseTestData))
+	}
 
-		t.Run(fmt.Sprintf("Good Data/%s", d.Name), func(t *testing.T) {
+	return dd
+}
+
+func TestSegmentParser_Parse_goodData(t *testing.T) {
+	for _, d := range readParseTestData("good/sentences") {
+		t.Run(d.Name, func(t *testing.T) {
 			parser := &SegmentParser{}
 			err := parser.Parse(d.Sentence) // Unit under test
 			if err != nil {
@@ -39,13 +45,11 @@ func TestSegmentParser_Parse(t *testing.T) {
 			}
 		})
 	}
+}
 
-	// Test with invalid checksums
-	badData := testhelp.ReadTestData("bad/invalid-checksums", mapParseInput, sortParseInput)
-	for _, data := range badData {
-		d := data.(testParseInput)
-
-		t.Run(fmt.Sprintf("Bad Data/Invalid Checksums/%s", d.Name), func(t *testing.T) {
+func TestSegmentParser_Parse_invalidChecksums(t *testing.T) {
+	for _, d := range readParseTestData("bad/invalid-checksums") {
+		t.Run(d.Name, func(t *testing.T) {
 			parser := &SegmentParser{}
 			err := parser.Parse(d.Sentence) // Unit under test
 			if err == nil {
