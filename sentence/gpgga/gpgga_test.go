@@ -16,16 +16,14 @@ func mapGoodTestData(title string, input map[string]interface{}) interface{} {
 	return testData{
 		Title:    title,
 		Sentence: testhelp.EnsureString(input["Sentence"]),
-		ErrMsg:   testhelp.OptString(input["ErrMsg"]),
-
 		GPGGA: GPGGA{
 			FixTime:        testhelp.EnsureFloat32(input["FixTime"]),
 			Latitude:       testhelp.EnsureFloat64(input["Latitude"]),
 			NorthSouth:     NorthSouth(testhelp.EnsureString(input["NorthSouth"])),
 			Longitude:      testhelp.EnsureFloat64(input["Longitude"]),
 			EastWest:       EastWest(testhelp.EnsureString(input["EastWest"])),
-			FixQuality:     testhelp.OptInt8(input["FixQuality"]),
-			SatCount:       testhelp.OptInt8(input["SatCount"]),
+			FixQuality:     testhelp.EnsureInt8(input["FixQuality"]),
+			SatCount:       testhelp.EnsureInt8(input["SatCount"]),
 			HDOP:           testhelp.EnsureFloat32(input["HDOP"]),
 			Altitude:       testhelp.EnsureFloat32(input["Altitude"]),
 			AltitudeUOM:    testhelp.EnsureString(input["AltitudeUOM"]),

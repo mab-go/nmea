@@ -2,6 +2,18 @@
 // of type "GPGLL".
 package gpgll // import "gopkg.in/mab-go/nmea.v0/sentence/gpgll"
 
+// DataStatus represents the status of a GPS fix. It can be either "A" (valid) or
+// "V" (invalid).
+type DataStatus string
+
+const (
+	// ValidDataStatus represents a valid GPS fix.
+	ValidDataStatus DataStatus = "A"
+
+	// InvalidDataStatus represents an invalid GPS fix.
+	InvalidDataStatus DataStatus = "V"
+)
+
 // @formatter:off
 
 // GPGLL represents an NMEA sentence of type "GPGLL".
@@ -30,4 +42,8 @@ type GPGLL struct { // nolint: maligned
 	// example, the value 174831.864 represents the time 17:48:31.864. It is element [5] of a
 	// GPGLL sentence.
 	FixTime float32
+
+	// DataStatus represents the status of the GPS fix. It can be either "A" (valid) or "V"
+	// (invalid). It is element [6] of a GPGLL sentence.
+	DataStatus DataStatus
 }
