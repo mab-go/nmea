@@ -12,6 +12,14 @@ A programming toolkit for interacting with NMEA data. Written in Go (golang).
 
 ### Running Tests
 
-```shell
+Using `go test`:
+
+```
 go test ./...
+```
+
+Using `goconvey` (Web UI):
+
+```
+goconvey
 ```

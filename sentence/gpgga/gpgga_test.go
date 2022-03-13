@@ -1,40 +1,61 @@
 package gpgga
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"testing"
+
+	"gopkg.in/mab-go/nmea.v0/sentence/testhelp"
 )
 
-// --- Test Helpers ------------------------------------------------------------
+type testData struct {
+	GPGGA
+	Title, Sentence, ErrMsg string
+}
 
-func readTestData(path string, data interface{}) {
-	contents, err := ioutil.ReadFile("_testdata/" + path)
-	if err != nil {
-		panic(err)
-	}
+func mapTestData(title string, input map[string]interface{}) interface{} {
+	return testData{
+		Title:    title,
+		Sentence: input["Sentence"].(string),
+		ErrMsg:   testhelp.AsStringOrDefault(input["ErrMsg"], ""),
 
-	err = json.Unmarshal(contents, &data)
-	if err != nil {
-		panic(err)
+		GPGGA: GPGGA{
+			FixTime:        float32(input["FixTime"].(float64)),
+			Latitude:       input["Latitude"].(float64),
+			NorthSouth:     NorthSouth(input["NorthSouth"].(string)),
+			Longitude:      input["Longitude"].(float64),
+			EastWest:       EastWest(input["EastWest"].(string)),
+			FixQuality:     int8(input["FixQuality"].(int)),
+			SatCount:       int8(input["SatCount"].(int)),
+			HDOP:           float32(input["HDOP"].(float64)),
+			Altitude:       float32(input["Altitude"].(float64)),
+			AltitudeUOM:    input["AltitudeUOM"].(string),
+			GeoidHeight:    float32(input["GeoidHeight"].(float64)),
+			GeoidHeightUOM: input["GeoidHeightUOM"].(string),
+			DGPSUpdateAge:  float32(testhelp.AsFloat64OrDefault(input["DGPSUpdateAge"], 0)),
+			DGPSStationID:  int16(testhelp.AsIntOrDefault(input["DGPSStationID"], 0)),
+		},
 	}
 }
 
-// --- Test Functions ----------------------------------------------------------
+func sortTestData(result []interface{}, i, j int) bool {
+	return result[i].(testData).Title < result[j].(testData).Title
+}
+
+func readTestData(name string) []testData {
+	data := testhelp.ReadTestData(name, mapTestData, sortTestData)
+	var dd []testData
+	for _, d := range data {
+		dd = append(dd, d.(testData))
+	}
+
+	return dd
+}
 
 // nolint: gocyclo
 func TestParseGPGGA_goodData(t *testing.T) {
-	type expectedGpgga struct {
-		GPGGA
-		Title string `json:"_Title"`
-	}
-	testData := make(map[string]expectedGpgga)
-	readTestData("good-with-expected-vals.json", &testData)
-
-	for sentence, expected := range testData {
+	for _, expected := range readTestData("good/sentences") {
 		t.Run(expected.Title, func(t *testing.T) {
-			actual, err := ParseGPGGA(sentence)
+			actual, err := ParseGPGGA(expected.Sentence)
 
 			if err != nil {
 				t.Errorf("error creating GPGGA from NMEA sentence \"%v\": %v", expected.Title, err)
@@ -117,17 +138,9 @@ func TestParseGPGGA_invalidChecksum(t *testing.T) {
 }
 
 func TestParseGPGGA_badSegments(t *testing.T) {
-	type badSentence struct {
-		Sentence string
-		ErrMsg   string
-		Title    string `json:"_Title"`
-	}
-	var testData []badSentence
-	readTestData("bad-with-err-msgs.json", &testData)
-
-	for i, data := range testData {
-		t.Run(data.Title, func(t *testing.T) {
-			gpgga, err := ParseGPGGA(data.Sentence)
+	for i, d := range readTestData("bad/invalid-segments") {
+		t.Run(d.Title, func(t *testing.T) {
+			gpgga, err := ParseGPGGA(d.Sentence)
 
 			if err == nil {
 				t.Errorf("parsing succeeded (but should not have) for test sentence [%v]", i)
@@ -139,8 +152,8 @@ func TestParseGPGGA_badSegments(t *testing.T) {
 				return
 			}
 
-			if err.Error() != data.ErrMsg {
-				t.Errorf("error message should have been '%v' but was '%v' for test sentence [%v]", data.ErrMsg, err.Error(), i)
+			if err.Error() != d.ErrMsg {
+				t.Errorf("error message should have been '%v' but was '%v' for test sentence [%v]", d.ErrMsg, err.Error(), i)
 				return
 			}
 		})

@@ -8,21 +8,21 @@ import (
 )
 
 type checksumTestData struct {
-	Name, Sentence, ActualChecksum, AdvertisedChecksum, ErrMsg string
+	Title, Sentence, ActualChecksum, AdvertisedChecksum, ErrMsg string
 }
 
-func mapChecksumTestData(title string, input map[string]string) interface{} {
+func mapChecksumTestData(title string, input map[string]interface{}) interface{} {
 	return checksumTestData{
-		Name:               title,
-		Sentence:           input["Sentence"],
-		ActualChecksum:     input["ActualChecksum"],
-		AdvertisedChecksum: input["AdvertisedChecksum"],
-		ErrMsg:             input["ErrMsg"],
+		Title:              title,
+		Sentence:           input["Sentence"].(string),
+		ActualChecksum:     testhelp.AsStringOrDefault(input["ActualChecksum"], ""),
+		AdvertisedChecksum: testhelp.AsStringOrDefault(input["AdvertisedChecksum"], ""),
+		ErrMsg:             testhelp.AsStringOrDefault(input["ErrMsg"], ""),
 	}
 }
 
 func sortChecksumTestData(result []interface{}, i, j int) bool {
-	return result[i].(checksumTestData).Name < result[j].(checksumTestData).Name
+	return result[i].(checksumTestData).Title < result[j].(checksumTestData).Title
 }
 
 func readChecksumTestData(name string) []checksumTestData {
@@ -37,7 +37,7 @@ func readChecksumTestData(name string) []checksumTestData {
 
 func TestVerifyChecksum_goodData(t *testing.T) {
 	for _, d := range readChecksumTestData("good/sentences") {
-		t.Run(fmt.Sprintf("Good Data/%s", d.Name), func(t *testing.T) {
+		t.Run(d.Title, func(t *testing.T) {
 			err := VerifyChecksum(d.Sentence)
 			if err != nil {
 				t.Errorf("checksum verification failed: %v", err)
@@ -51,7 +51,7 @@ func TestVerifyChecksum_invalidChecksums(t *testing.T) {
 	for _, data := range badChecksumData {
 		d := data.(checksumTestData)
 
-		t.Run(d.Name, func(t *testing.T) {
+		t.Run(d.Title, func(t *testing.T) {
 			err := VerifyChecksum(d.Sentence)
 			if err == nil {
 				t.Error("checksum verification succeeded (but should not have)")
@@ -73,7 +73,7 @@ func TestVerifyChecksum_malformedData(t *testing.T) {
 	for _, data := range malformedData {
 		d := data.(checksumTestData)
 
-		t.Run(d.Name, func(t *testing.T) {
+		t.Run(d.Title, func(t *testing.T) {
 			err := VerifyChecksum(d.Sentence)
 			if err == nil {
 				t.Error("checksum verification succeeded (but should not have)")

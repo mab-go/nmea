@@ -8,21 +8,21 @@ import (
 )
 
 type parseTestData struct {
-	Name, Sentence, ActualChecksum, AdvertisedChecksum, ErrMsg string
+	Title, Sentence, ActualChecksum, AdvertisedChecksum, ErrMsg string
 }
 
-func mapParseTestData(title string, input map[string]string) interface{} {
+func mapParseTestData(title string, input map[string]interface{}) interface{} {
 	return parseTestData{
-		Name:               title,
-		Sentence:           input["Sentence"],
-		ActualChecksum:     input["ActualChecksum"],
-		AdvertisedChecksum: input["AdvertisedChecksum"],
-		ErrMsg:             input["ErrMsg"],
+		Title:              title,
+		Sentence:           input["Sentence"].(string),
+		ActualChecksum:     input["ActualChecksum"].(string),
+		AdvertisedChecksum: testhelp.AsStringOrDefault(input["AdvertisedChecksum"], ""),
+		ErrMsg:             testhelp.AsStringOrDefault(input["ErrMsg"], ""),
 	}
 }
 
 func sortParseTestData(result []interface{}, i, j int) bool {
-	return result[i].(parseTestData).Name < result[j].(parseTestData).Name
+	return result[i].(parseTestData).Title < result[j].(parseTestData).Title
 }
 
 func readParseTestData(name string) []parseTestData {
@@ -37,7 +37,7 @@ func readParseTestData(name string) []parseTestData {
 
 func TestSegmentParser_Parse_goodData(t *testing.T) {
 	for _, d := range readParseTestData("good/sentences") {
-		t.Run(d.Name, func(t *testing.T) {
+		t.Run(d.Title, func(t *testing.T) {
 			parser := &SegmentParser{}
 			err := parser.Parse(d.Sentence) // Unit under test
 			if err != nil {
@@ -49,7 +49,7 @@ func TestSegmentParser_Parse_goodData(t *testing.T) {
 
 func TestSegmentParser_Parse_invalidChecksums(t *testing.T) {
 	for _, d := range readParseTestData("bad/invalid-checksums") {
-		t.Run(d.Name, func(t *testing.T) {
+		t.Run(d.Title, func(t *testing.T) {
 			parser := &SegmentParser{}
 			err := parser.Parse(d.Sentence) // Unit under test
 			if err == nil {
