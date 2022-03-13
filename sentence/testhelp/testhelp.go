@@ -14,12 +14,12 @@ type TestDatum struct {
 	Name, Sentence, ActualChecksum, AdvertisedChecksum, ErrMsg string
 }
 
-// ReadTestData reads the contents of the specified test data set (a YAML file)
-// into a slice of TestDatum structs. The file must have a ".yaml" extension and
-// must be located in a directory named "testdata", which must be in the same
-// package as the caller.
+// ReadTestData reads the contents of the specified test data set (a YAML file) into a slice of
+// TestDatum structs. The file must have a ".yaml" extension and must be located in a directory
+// named "testdata".
 //
 // Example:
+//
 //     // In 'foo/test_bar.go', read file 'foo/testdata/good/sentences.yaml':
 //     testData := testhelp.ReadTestData("good/sentences")
 //     for datum := range testData {

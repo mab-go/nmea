@@ -8,8 +8,7 @@ import (
 
 // --- Public ------------------------------------------------------------------
 
-// SegmentParser provides functionality for parsing individual segments of an
-// NMEA sentence.
+// SegmentParser provides functionality for parsing individual segments of an NMEA sentence.
 type SegmentParser struct {
 	sentence string
 	segments []string
@@ -37,8 +36,8 @@ func (p *SegmentParser) Err() *ParsingError {
 	return p.err
 }
 
-// AsFloat32 parses the sentence segment at the specified index as a float32 value.
-// If p.Err() is not nil, this function returns 0 and leaves the error unchanged.
+// AsFloat32 parses the sentence segment at the specified index as a float32 value. If p.Err() is
+// not nil, this function returns 0 and leaves the error unchanged.
 func (p *SegmentParser) AsFloat32(i int8) float32 {
 	if p.checkInRange(i); p.err != nil {
 		return 0
@@ -57,8 +56,8 @@ func (p *SegmentParser) AsFloat32(i int8) float32 {
 	}
 }
 
-// AsFloat64 parses the sentence segment at the specified index as a float64 value.
-// If p.Err() is not nil, this function returns 0 and leaves the error unchanged.
+// AsFloat64 parses the sentence segment at the specified index as a float64 value. If p.Err() is
+// not nil, this function returns 0 and leaves the error unchanged.
 func (p *SegmentParser) AsFloat64(i int8) float64 {
 	if p.checkInRange(i); p.err != nil {
 		return 0
@@ -77,8 +76,8 @@ func (p *SegmentParser) AsFloat64(i int8) float64 {
 	}
 }
 
-// AsInt8 parses the sentence segment at the specified index as an int8 value.
-// If p.Err() is not nil, this function returns 0 and leaves the error unchanged.
+// AsInt8 parses the sentence segment at the specified index as an int8 value. If p.Err() is not
+// nil, this function returns 0 and leaves the error unchanged.
 func (p *SegmentParser) AsInt8(i int8) int8 {
 	val := p.asInt(i, 8)
 	if val == 0 {
@@ -88,10 +87,9 @@ func (p *SegmentParser) AsInt8(i int8) int8 {
 	return p.asInt(i, 8).(int8)
 }
 
-// AsInt8InRange parses the sentence segment at the specified index as an int8
-// value and ensures that it matches one of the required values in the range from
-// l to u (lower and upper bound inclusive). If p.Err() is not nil, this function
-// returns 0 and leaves the error unchanged.
+// AsInt8InRange parses the sentence segment at the specified index as an int8 value and ensures
+// that it matches one of the required values in the range from l to u (lower and upper bound
+// inclusive). If p.Err() is not nil, this function returns 0 and leaves the error unchanged.
 func (p *SegmentParser) AsInt8InRange(i int8, l int8, u int8) int8 {
 	if p.checkInRange(i); p.err != nil {
 		return 0
@@ -113,8 +111,8 @@ func (p *SegmentParser) AsInt8InRange(i int8, l int8, u int8) int8 {
 	return val
 }
 
-// AsInt16 parses the sentence segment at the specified index as an int32 value.
-// If p.Err() is not nil, this function returns 0 and leaves the error unchanged.
+// AsInt16 parses the sentence segment at the specified index as an int32 value. If p.Err() is not
+// nil, this function returns 0 and leaves the error unchanged.
 func (p *SegmentParser) AsInt16(i int8) int16 {
 	val := p.asInt(i, 16)
 	if val == 0 {
@@ -124,8 +122,8 @@ func (p *SegmentParser) AsInt16(i int8) int16 {
 	return p.asInt(i, 16).(int16)
 }
 
-// AsInt32 parses the sentence segment at the specified index as an int32 value.
-// If p.Err() is not nil, this function returns 0 and leaves the error unchanged.
+// AsInt32 parses the sentence segment at the specified index as an int32 value. If p.Err() is not
+// nil, this function returns 0 and leaves the error unchanged.
 func (p *SegmentParser) AsInt32(i int8) int32 {
 	val := p.asInt(i, 32)
 	if val == 0 {
@@ -135,10 +133,9 @@ func (p *SegmentParser) AsInt32(i int8) int32 {
 	return p.asInt(i, 32).(int32)
 }
 
-// RequireString parses the sentence segment at the specified index as a string
-// value and ensures that it matches the required value s (case insensitive).
-// If p.Err() is not nil, this function returns an empty string and leaves the
-// error unchanged.
+// RequireString parses the sentence segment at the specified index as a string value and ensures
+// that it matches the required value s (case-insensitive). If p.Err() is not nil, this function
+// returns an empty string and leaves the error unchanged.
 func (p *SegmentParser) RequireString(i int8, s string) string {
 	if p.checkInRange(i); p.err != nil {
 		return ""
@@ -155,10 +152,9 @@ func (p *SegmentParser) RequireString(i int8, s string) string {
 	return p.segments[i]
 }
 
-// RequireStrings parses the sentence segment at the specified index as a string
-// value and ensures that it matches one of the required values in s (case
-// insensitive). If p.Err() is not nil, this function returns an empty string and
-// leaves the error unchanged.
+// RequireStrings parses the sentence segment at the specified index as a string value and ensures
+// that it matches one of the required values in s (case-insensitive). If p.Err() is not nil, this
+// function returns an empty string and leaves the error unchanged.
 func (p *SegmentParser) RequireStrings(i int8, s []string) string {
 	if p.checkInRange(i); p.err != nil {
 		return ""
@@ -211,7 +207,7 @@ func (p *SegmentParser) asInt(i int8, bitSize int) interface{} {
 		}
 	}
 
-	panic("should have returned (but did not) because bitSize was " + string(bitSize))
+	panic("should have returned (but did not) because bitSize was " + string(rune(bitSize)))
 }
 
 func (p *SegmentParser) checkInRange(i int8) {

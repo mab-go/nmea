@@ -41,83 +41,41 @@ func TestSegmentParser_Parse(t *testing.T) {
 	}
 }
 
-//func TestSegmentParser_Parse_goodData(t *testing.T) {
-//	var testData []testSentence
-//	readTestData("good-with-checksums.json", &testData)
-//
-//	for i, s := range testData {
-//		t.Run(fmt.Sprintf("[%d]", i), func(t *testing.T) {
-//			parser := &SegmentParser{}
-//			err := parser.Parse(s.Sentence)
-//			if err != nil {
-//				t.Errorf("segment parsing failed for test sentence [%v]: %v", i, err)
-//			}
-//		})
-//	}
-//}
-//
-//func TestSegmentParser_Parse_badData(t *testing.T) {
-//	var testData []testSentence
-//	readTestData("bad-invalid-checksums.json", &testData)
-//
-//	for i, s := range testData {
-//		t.Run(fmt.Sprintf("[%d]", i), func(t *testing.T) {
-//			parser := &SegmentParser{}
-//			err := parser.Parse(s.Sentence)
-//			if err == nil {
-//				t.Errorf("segment parsing succeeded (but should not have) for test sentence [%v]", i)
-//			}
-//
-//			if err.Error() != s.ErrMsg {
-//				t.Errorf("error message should have been '%v' but was '%v' for test sentence [%v]", s.ErrMsg, err.Error(), i)
-//			}
-//		})
-//	}
-//}
-
 func TestSegmentParser_Err(t *testing.T) {
 	t.Skip()
 }
 
-//func TestSegmentParser_AsFloat32_goodData(t *testing.T) {
-//	sentence := "$GPGGA,002454.123,3553.5295,N,13938.6570,E,1,05,2.2,18.3,M,39.0,M,,*61"
-//	segments := &SegmentParser{}
-//	err := segments.Parse(sentence)
-//	if err != nil {
-//		t.Errorf("segment parsing failed for test sentence: %v", err)
-//	}
-//
-//	expected := float32(2454.123)
-//	actual := segments.AsFloat32(1)
-//
-//	if segments.Err() != nil {
-//		t.Errorf("encountered error after calling AsFloat32: %v", segments.Err())
-//	}
-//
-//	if actual != expected {
-//		t.Errorf("return value should have been %v but was %v", expected, actual)
-//	}
-//}
-//
-//func TestSegmentParser_AsFloat32_badData(t *testing.T) {
-//	sentence := "$GPGGA,bad_FixTime,3553.5295,N,13938.6570,E,1,05,2.2,18.3,M,39.0,M,,*22"
-//	segments := &SegmentParser{}
-//	err := segments.Parse(sentence)
-//	if err != nil {
-//		t.Errorf("segment parsing failed for test sentence: %v", err)
-//	}
-//
-//	segments.AsFloat32(1)
-//
-//	expectedErr := "sentence segment [1] must be parsable as a float32 but was \"bad_FixTime\""
-//	if segments.Err() == nil {
-//		t.Error("should have encountered error after calling AsFloat32 with bad data but did not")
-//	} else if err := segments.Err().Error(); err != expectedErr {
-//		t.Errorf("error message should have been '%v' but was '%v'", expectedErr, err)
-//	}
-//}
+func TestSegmentParser_AsFloat32(t *testing.T) {
+	sentence := "$GPGGA,183730,3907.356,N,12102.482,W,1,05,1.6,646.4,M,-24.1,M,,*75"
+	parser := &SegmentParser{}
+	err := parser.Parse(sentence)
+	if err != nil {
+		t.Errorf("segment parsing failed: %v", err)
+	}
+
+	// Test with a float32
+	t.Run("Good Data", func(t *testing.T) {
+		expected := float32(646.4)
+		actual := parser.AsFloat32(9)
+		if actual != expected {
+			t.Errorf("expected result to be %v but was %v", expected, actual)
+		}
+	})
+
+	// Test with out-of-range index
+	//t.Run("Index Out of Range", func(t *testing.T) {
+	//	v := parser.AsFloat32(99)
+	//	if parser.Err() == nil {
+	//		t.Errorf("!!! %v", err)
+	//	}
+	//})
+}
 
 func TestSegmentParser_AsFloat64(t *testing.T) {
+	/*
+	"$GPGGA,183730,3907.356,N,12102.482,W,1,05,1.6,646.4,M,-24.1,M,,*75"
+	*/
+
 	t.Skip()
 }
 
@@ -134,6 +92,10 @@ func TestSegmentParser_AsInt16(t *testing.T) {
 }
 
 func TestSegmentParser_AsInt32(t *testing.T) {
+	t.Skip()
+}
+
+func TestSegmentParser_AsInt64(t *testing.T) {
 	t.Skip()
 }
 
