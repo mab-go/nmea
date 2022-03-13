@@ -12,29 +12,36 @@ type testData struct {
 	Title, Sentence, ErrMsg string
 }
 
-func mapTestData(title string, input map[string]interface{}) interface{} {
+func mapGoodTestData(title string, input map[string]interface{}) interface{} {
 	return testData{
 		Title:    title,
-		Sentence: input["Sentence"].(string),
-		ErrMsg:   testhelp.AsStringOrDefault(input["ErrMsg"], ""),
+		Sentence: testhelp.EnsureString(input["Sentence"]),
+		ErrMsg:   testhelp.OptString(input["ErrMsg"]),
 
 		GPGGA: GPGGA{
-			// FixTime:        float32(input["FixTime"].(float64)),
 			FixTime:        testhelp.EnsureFloat32(input["FixTime"]),
-			Latitude:       input["Latitude"].(float64),
-			NorthSouth:     NorthSouth(input["NorthSouth"].(string)),
-			Longitude:      input["Longitude"].(float64),
-			EastWest:       EastWest(input["EastWest"].(string)),
-			FixQuality:     int8(input["FixQuality"].(int)),
-			SatCount:       int8(input["SatCount"].(int)),
-			HDOP:           float32(input["HDOP"].(float64)),
-			Altitude:       float32(input["Altitude"].(float64)),
-			AltitudeUOM:    input["AltitudeUOM"].(string),
-			GeoidHeight:    float32(input["GeoidHeight"].(float64)),
-			GeoidHeightUOM: input["GeoidHeightUOM"].(string),
+			Latitude:       testhelp.EnsureFloat64(input["Latitude"]),
+			NorthSouth:     NorthSouth(testhelp.EnsureString(input["NorthSouth"])),
+			Longitude:      testhelp.EnsureFloat64(input["Longitude"]),
+			EastWest:       EastWest(testhelp.EnsureString(input["EastWest"])),
+			FixQuality:     testhelp.OptInt8(input["FixQuality"]),
+			SatCount:       testhelp.OptInt8(input["SatCount"]),
+			HDOP:           testhelp.EnsureFloat32(input["HDOP"]),
+			Altitude:       testhelp.EnsureFloat32(input["Altitude"]),
+			AltitudeUOM:    testhelp.EnsureString(input["AltitudeUOM"]),
+			GeoidHeight:    testhelp.EnsureFloat32(input["GeoidHeight"]),
+			GeoidHeightUOM: testhelp.EnsureString(input["GeoidHeightUOM"]),
 			DGPSUpdateAge:  testhelp.OptFloat32(input["DGPSUpdateAge"]),
-			DGPSStationID:  int16(testhelp.AsIntOrDefault(input["DGPSStationID"], 0)),
+			DGPSStationID:  testhelp.OptInt16(input["DGPSStationID"]),
 		},
+	}
+}
+
+func mapBadTestData(title string, input map[string]interface{}) interface{} {
+	return testData{
+		Title:    title,
+		Sentence: testhelp.EnsureString(input["Sentence"]),
+		ErrMsg:   testhelp.EnsureString(input["ErrMsg"]),
 	}
 }
 
@@ -42,19 +49,11 @@ func sortTestData(result []interface{}, i, j int) bool {
 	return result[i].(testData).Title < result[j].(testData).Title
 }
 
-func readTestData(name string) []testData {
-	data := testhelp.ReadTestData(name, mapTestData, sortTestData)
-	var dd []testData
-	for _, d := range data {
-		dd = append(dd, d.(testData))
-	}
-
-	return dd
-}
-
 // nolint: gocyclo
 func TestParseGPGGA_goodData(t *testing.T) {
-	for _, expected := range readTestData("good/sentences") {
+	for _, d := range testhelp.ReadTestData("good/sentences", mapGoodTestData, sortTestData) {
+		expected := d.(testData)
+
 		t.Run(expected.Title, func(t *testing.T) {
 			actual, err := ParseGPGGA(expected.Sentence)
 
@@ -139,9 +138,11 @@ func TestParseGPGGA_invalidChecksum(t *testing.T) {
 }
 
 func TestParseGPGGA_badSegments(t *testing.T) {
-	for i, d := range readTestData("bad/invalid-segments") {
-		t.Run(d.Title, func(t *testing.T) {
-			gpgga, err := ParseGPGGA(d.Sentence)
+	for i, d := range testhelp.ReadTestData("bad/invalid-segments", mapBadTestData, sortTestData) {
+		expected := d.(testData)
+
+		t.Run(expected.Title, func(t *testing.T) {
+			gpgga, err := ParseGPGGA(expected.Sentence)
 
 			if err == nil {
 				t.Errorf("parsing succeeded (but should not have) for test sentence [%v]", i)
@@ -153,8 +154,8 @@ func TestParseGPGGA_badSegments(t *testing.T) {
 				return
 			}
 
-			if err.Error() != d.ErrMsg {
-				t.Errorf("error message should have been '%v' but was '%v' for test sentence [%v]", d.ErrMsg, err.Error(), i)
+			if err.Error() != expected.ErrMsg {
+				t.Errorf("error message should have been '%v' but was '%v' for test sentence [%v]", expected.ErrMsg, err.Error(), i)
 				return
 			}
 		})

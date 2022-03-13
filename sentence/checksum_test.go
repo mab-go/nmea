@@ -14,10 +14,10 @@ type checksumTestData struct {
 func mapChecksumTestData(title string, input map[string]interface{}) interface{} {
 	return checksumTestData{
 		Title:              title,
-		Sentence:           input["Sentence"].(string),
-		ActualChecksum:     testhelp.AsStringOrDefault(input["ActualChecksum"], ""),
-		AdvertisedChecksum: testhelp.AsStringOrDefault(input["AdvertisedChecksum"], ""),
-		ErrMsg:             testhelp.AsStringOrDefault(input["ErrMsg"], ""),
+		Sentence:           testhelp.EnsureString(input["Sentence"]),
+		ActualChecksum:     testhelp.OptString(input["ActualChecksum"]),
+		AdvertisedChecksum: testhelp.OptString(input["AdvertisedChecksum"]),
+		ErrMsg:             testhelp.OptString(input["ErrMsg"]),
 	}
 }
 

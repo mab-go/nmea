@@ -14,10 +14,10 @@ type parseTestData struct {
 func mapParseTestData(title string, input map[string]interface{}) interface{} {
 	return parseTestData{
 		Title:              title,
-		Sentence:           input["Sentence"].(string),
-		ActualChecksum:     input["ActualChecksum"].(string),
-		AdvertisedChecksum: testhelp.AsStringOrDefault(input["AdvertisedChecksum"], ""),
-		ErrMsg:             testhelp.AsStringOrDefault(input["ErrMsg"], ""),
+		Sentence:           testhelp.EnsureString(input["Sentence"]),
+		ActualChecksum:     testhelp.EnsureString(input["ActualChecksum"]),
+		AdvertisedChecksum: testhelp.OptString(input["AdvertisedChecksum"]),
+		ErrMsg:             testhelp.OptString(input["ErrMsg"]),
 	}
 }
 
