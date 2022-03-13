@@ -4,90 +4,48 @@ package testhelp // import "gopkg.in/mab-go/nmea.v0/sentence/testhelp"
 
 import (
 	"io/ioutil"
+	"path"
 	"sort"
 
 	"gopkg.in/yaml.v2"
 )
 
-// // TestCaseInput is a mapping of test case titles to test case data.
-// type TestCaseInput = map[string]map[string]string
-
-// // TestDatum represents a single datum from a set of test data.
-// type TestDatum struct {
-// 	Name, Sentence, ActualChecksum, AdvertisedChecksum, ErrMsg string
-// }
-
-func ReadTestData2(
+// ReadTestData reads the contents of the specified test data set (a YAML file) into a slice of
+// some type defined by the return value of mapFn. The file must have a ".yaml" extension and must
+// be located in a directory named "_testdata" relative to the caller.
+//
+// Example:
+//
+//     // In 'foo/test_bar.go', read file 'foo/_testdata/good/sentences.yaml':
+//     goodData := testhelp.ReadTestData("good/sentences", mapParseInput, sortParseInput)
+//	   for _, data := range goodData {
+//	       d := data.(myInputType)
+//         // Use test data...
+//     }
+func ReadTestData(
 	name string,
 	mapFn func(title string, input map[string]string) interface{},
 	sortFn func(result []interface{}, i, j int) bool,
 ) []interface{} {
-	contents, err := ioutil.ReadFile("_testdata/" + name + ".yaml")
+	contents, err := ioutil.ReadFile(path.Join("_testdata/", name+".yaml"))
 	if err != nil {
 		panic(err)
 	}
 
-	var target map[string]map[string]string
-	err = yaml.Unmarshal(contents, &target)
+	// input is a map of test case titles to test case input objects
+	var input map[string]map[string]string
+	err = yaml.Unmarshal(contents, &input)
 	if err != nil {
 		panic(err)
 	}
 
 	var result []interface{}
-	for k, v := range target {
+	for k, v := range input {
 		result = append(result, mapFn(k, v))
-		// result = append(result, TestDatum{
-		// 	Name:               k,
-		// 	Sentence:           v["Sentence"],
-		// 	ActualChecksum:     v["ActualChecksum"],
-		// 	AdvertisedChecksum: v["AdvertisedChecksum"],
-		// 	ErrMsg:             v["ErrMsg"],
-		// })
 	}
 
 	sort.Slice(result, func(i, j int) bool {
 		return sortFn(result, i, j)
-	})
-
-	return result
-}
-
-// ReadTestData reads the contents of the specified test data set (a YAML file) into a slice of
-// TestDatum structs. The file must have a ".yaml" extension and must be located in a directory
-// named "testdata".
-//
-// Example:
-//
-//     // In 'foo/test_bar.go', read file 'foo/testdata/good/sentences.yaml':
-//     testData := testhelp.ReadTestData("good/sentences")
-//     for datum := range testData {
-//         // Use test data
-//     }
-func ReadTestData(name string) []TestDatum {
-	contents, err := ioutil.ReadFile("_testdata/" + name + ".yaml")
-	if err != nil {
-		panic(err)
-	}
-
-	var target map[string]map[string]string
-	err = yaml.Unmarshal(contents, &target)
-	if err != nil {
-		panic(err)
-	}
-
-	var result []TestDatum
-	for k, v := range target {
-		result = append(result, TestDatum{
-			Name:               k,
-			Sentence:           v["Sentence"],
-			ActualChecksum:     v["ActualChecksum"],
-			AdvertisedChecksum: v["AdvertisedChecksum"],
-			ErrMsg:             v["ErrMsg"],
-		})
-	}
-
-	sort.Slice(result, func(i, j int) bool {
-		return result[i].Name < result[j].Name
 	})
 
 	return result

@@ -7,11 +7,30 @@ import (
 	"gopkg.in/mab-go/nmea.v0/sentence/testhelp"
 )
 
-// --- Test Functions ----------------------------------------------------------
+type testChecksumInput struct {
+	Name, Sentence, ActualChecksum, AdvertisedChecksum, ErrMsg string
+}
+
+func mapChecksumInput(title string, input map[string]string) interface{} {
+	return testChecksumInput{
+		Name:               title,
+		Sentence:           input["Sentence"],
+		ActualChecksum:     input["ActualChecksum"],
+		AdvertisedChecksum: input["AdvertisedChecksum"],
+		ErrMsg:             input["ErrMsg"],
+	}
+}
+
+func sortChecksumInput(result []interface{}, i, j int) bool {
+	return result[i].(testChecksumInput).Name < result[j].(testChecksumInput).Name
+}
 
 func TestVerifyChecksum(t *testing.T) {
 	// Test with good data
-	for _, d := range testhelp.ReadTestData("good/sentences") {
+	goodData := testhelp.ReadTestData("good/sentences", mapChecksumInput, sortChecksumInput)
+	for _, data := range goodData {
+		d := data.(testChecksumInput)
+
 		t.Run(fmt.Sprintf("Good Data/%s", d.Name), func(t *testing.T) {
 			err := VerifyChecksum(d.Sentence)
 			if err != nil {
@@ -21,7 +40,10 @@ func TestVerifyChecksum(t *testing.T) {
 	}
 
 	// Test with invalid checksums
-	for _, d := range testhelp.ReadTestData("bad/invalid-checksums") {
+	badChecksumData := testhelp.ReadTestData("bad/invalid-checksums", mapChecksumInput, sortChecksumInput)
+	for _, data := range badChecksumData {
+		d := data.(testChecksumInput)
+
 		t.Run(fmt.Sprintf("Bad Data/Invalid Checksums/%s", d.Name), func(t *testing.T) {
 			err := VerifyChecksum(d.Sentence)
 			if err == nil {
@@ -39,7 +61,10 @@ func TestVerifyChecksum(t *testing.T) {
 	}
 
 	// Test with malformed sentences
-	for _, d := range testhelp.ReadTestData("bad/malformed") {
+	malformedData := testhelp.ReadTestData("bad/malformed", mapChecksumInput, sortChecksumInput)
+	for _, data := range malformedData {
+		d := data.(testChecksumInput)
+
 		t.Run(fmt.Sprintf("Bad Data/Malformed Sentences/%s", d.Name), func(t *testing.T) {
 			err := VerifyChecksum(d.Sentence)
 			if err == nil {
@@ -52,8 +77,6 @@ func TestVerifyChecksum(t *testing.T) {
 		})
 	}
 }
-
-// --- Example Functions -------------------------------------------------------
 
 func ExampleVerifyChecksum_validSentence() {
 	err := VerifyChecksum("$GPGGA,174800.864,4002.741,N,07618.550,W,1,12,1.0,0.0,M,0.0,M,,*70")
