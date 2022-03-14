@@ -1,7 +1,6 @@
 package gpgll
 
 import (
-	"fmt"
 	"testing"
 
 	"gopkg.in/mab-go/nmea.v0/sentence/testhelp"
@@ -54,9 +53,6 @@ func TestParseGPGLL_goodData(t *testing.T) {
 
 		t.Run(expected.Title, func(t *testing.T) {
 			actual, err := ParseGPGLL(expected.Sentence)
-
-			fmt.Printf("Actual: %+v\n", actual)
-			fmt.Printf("Err: %#v\n", err)
 
 			if err != nil {
 				t.Errorf("error creating GPGLL from NMEA sentence \"%v\": %v", expected.Title, err)

@@ -3,8 +3,6 @@
 package gpgll // import "gopkg.in/mab-go/nmea.v0/sentence/gpgll"
 
 import (
-	"fmt"
-
 	"gopkg.in/mab-go/nmea.v0/sentence"
 )
 
@@ -124,23 +122,15 @@ func ParseGPGLL(s string) (*GPGLL, error) {
 		return nil, err
 	}
 
-	fmt.Printf("[0] segments.Err(): %#v\n", segments.Err())
-
 	nsStr := segments.RequireStrings(2, NorthSouthStrings())
-	fmt.Printf("[1] segments.Err(): %#v\n", segments.Err())
-
 	northSouth, err := NorthSouthString(nsStr)
 	if err != nil {
-		panic(err)
-		return nil, err // fmt.Errorf("parse NorthSouth: %w", err)
+		return nil, err
 	}
-
-	fmt.Printf("northSouth: %#v\n", northSouth)
 
 	eastWest := []string{string(East), string(West)}
 
 	_ = segments.RequireString(0, "GPGLL") // Verify sentence type
-	fmt.Printf("[2] segments.Err(): %#v\n", segments.Err())
 	gpgll := &GPGLL{
 		Latitude:   segments.AsFloat64(1),
 		NorthSouth: northSouth,
@@ -151,11 +141,9 @@ func ParseGPGLL(s string) (*GPGLL, error) {
 		// Mode:       false,
 	}
 
-	fmt.Printf("[3] segments.Err(): %#v\n", segments.Err())
-	if err := segments.Err(); err != nil {
+	if err = segments.Err(); err != nil {
 		return nil, err
 	}
 
-	fmt.Printf("[4] segments.Err(): %#v\n", segments.Err())
 	return gpgll, nil
 }

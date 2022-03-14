@@ -12,7 +12,7 @@ import (
 type SegmentParser struct {
 	sentence string
 	segments []string
-	err      *ParsingError
+	err      error
 }
 
 // Parse parses the specified NMEA sentence into a series of sentence segments.
@@ -31,8 +31,8 @@ func (p *SegmentParser) Parse(s string) error {
 	return nil
 }
 
-// Err returns a SegmentParser's *ParsingError.
-func (p *SegmentParser) Err() *ParsingError {
+// Err returns a SegmentParser's error value.
+func (p *SegmentParser) Err() error {
 	return p.err
 }
 
