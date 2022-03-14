@@ -13,7 +13,7 @@ type SegmentParser struct {
 	err error
 }
 
-// AsNorthSouth parses the sentence segment at the specified index as a NorthSouth value. If p.Err()
+// AsNorthSouth parses the input segment at the specified index as a NorthSouth value. If p.Err()
 // is not nil, this function returns NorthSouth(-1) and leaves the error unchanged.
 func (p *SegmentParser) AsNorthSouth(i int8) NorthSouth {
 	if ns, err := NorthSouthString(p.AsString(i)); err != nil {
@@ -27,7 +27,7 @@ func (p *SegmentParser) AsNorthSouth(i int8) NorthSouth {
 	}
 }
 
-// AsEastWest parses the sentence segment at the specified index as an EastWest value. If p.Err() is
+// AsEastWest parses the input segment at the specified index as an EastWest value. If p.Err() is
 // not nil, this function returns EastWest(-1) and leaves the error unchanged.
 func (p *SegmentParser) AsEastWest(i int8) EastWest {
 	if ew, err := EastWestString(p.AsString(i)); err != nil {
@@ -41,7 +41,7 @@ func (p *SegmentParser) AsEastWest(i int8) EastWest {
 	}
 }
 
-// AsDataStatus parses the sentence segment at the specified index as a DataStatus value. If p.Err()
+// AsDataStatus parses the input segment at the specified index as a DataStatus value. If p.Err()
 // is not nil, this function returns DataStatus(-1) and leaves the error unchanged.
 func (p *SegmentParser) AsDataStatus(i int8) DataStatus {
 	if ds, err := DataStatusString(p.AsString(i)); err != nil {
@@ -55,7 +55,7 @@ func (p *SegmentParser) AsDataStatus(i int8) DataStatus {
 	}
 }
 
-// AsMode parses the sentence segment at the specified index as a Mode value. If p.Err() is not
+// AsMode parses the input segment at the specified index as a Mode value. If p.Err() is not
 // nil, this function returns Mode(-1) and leaves the error unchanged.
 func (p *SegmentParser) AsMode(i int8) Mode {
 	if m, err := ModeString(p.AsString(i)); err != nil {
