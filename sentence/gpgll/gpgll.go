@@ -124,10 +124,8 @@ func ParseGPGLL(s string) (*GPGLL, error) {
 		return nil, err
 	}
 
-	nsStr := segments.RequireStrings(2, NorthSouthStrings())
-
 	var northSouth NorthSouth
-	if northSouth, err = NorthSouthString(nsStr); err != nil {
+	if northSouth, err = NorthSouthString(segments.AsString(2)); err != nil {
 		return nil, err
 	}
 
@@ -139,7 +137,7 @@ func ParseGPGLL(s string) (*GPGLL, error) {
 		NorthSouth: northSouth,
 		Longitude:  segments.AsFloat64(3),
 		EastWest:   EastWest(segments.RequireStrings(4, eastWest)),
-		FixTime:    segments.AsFloat32(1),
+		FixTime:    segments.AsFloat32(5),
 		// DataStatus: false,
 		// Mode:       false,
 	}

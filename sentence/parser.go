@@ -133,6 +133,30 @@ func (p *SegmentParser) AsInt32(i int8) int32 {
 	return p.asInt(i, 32).(int32)
 }
 
+// AsString parses the sentence segment at the specified index as a string value. If p.Err() is not
+// nil, this function returns "" and leaves the error unchanged.
+func (p *SegmentParser) AsString(i int8) string {
+	if p.err != nil {
+		return "" // There's already an error; exit early.
+	}
+
+	if p.checkInRange(i); p.err != nil {
+		return ""
+	}
+
+	if p.segments[i] == "" {
+		return ""
+		// } else if val, ok := interface{}(p.segments[i]).(string); !ok {
+		// 	p.err = &ParsingError{
+		// 		Segment: i,
+		// 		Message: fmt.Sprintf("must be parsable as a string but was \"%s\"", p.segments[i]),
+		// 	}
+		// 	return ""
+	} else {
+		return fmt.Sprintf("%s", p.segments[i])
+	}
+}
+
 // RequireString parses the sentence segment at the specified index as a string value and ensures
 // that it matches the required value s (case-insensitive). If p.Err() is not nil, this function
 // returns an empty string and leaves the error unchanged.

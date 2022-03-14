@@ -1,6 +1,6 @@
 "NMEA Simulator [1/4]":
     Sentence: "$GPGLL,3157.905722,S,11551.681852,E,215052.603,A*27"
-    Latitude: 157.905722
+    Latitude: 3157.905722
     NorthSouth: "S"
     Longitude: 11551.681852
     EastWest: "?"
