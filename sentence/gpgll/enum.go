@@ -17,10 +17,10 @@ const (
 type EastWest int
 
 const (
-	// East represents the northern hemisphere.
+	// East represents the eastern hemisphere.
 	East EastWest = iota
 
-	// West represents the southern hemisphere.
+	// West represents the western hemisphere.
 	West
 )
 
@@ -40,7 +40,6 @@ const (
 // "E", "M", or "N".
 type Mode int
 
-//goland:noinspection GoUnusedConst
 const (
 	// AutonomousMode represents an autonomous operating mode.
 	AutonomousMode Mode = iota // A
@@ -55,7 +54,7 @@ const (
 	ManualInputMode // M
 
 	// InvalidMode represents an invalid operating mode.
-	InvalidMode // "
+	InvalidMode // N
 )
 
 //go:generate enumer -type=NorthSouth,EastWest,DataStatus,Mode -text -linecomment -transform=first-upper -output=enum_gen.go

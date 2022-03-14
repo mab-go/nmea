@@ -6,12 +6,9 @@ import (
 	"gopkg.in/mab-go/nmea.v0/sentence"
 )
 
-// @formatter:off
-
-// GPGLL represents an NMEA sentence of type "GPGLL".
-type GPGLL struct { // nolint: maligned
-	// @formatter:on
-
+// GPGLL represents an NMEA sentence of type "$GPGLL". It contains a position fix location (latitude
+// and longitude), the time of the position fix, and the fix status.
+type GPGLL struct {
 	// Latitude is the "latitude" component of a GPS fix. The format is (d)ddmm.mmmmmmm. For
 	// example, the value 5106.7198674 represents a latitude value of 51° 6.7198674'. It is element
 	// [1] of a GPGLL sentence.
