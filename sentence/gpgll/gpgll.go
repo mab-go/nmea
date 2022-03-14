@@ -53,45 +53,23 @@ var _ sentence.NMEASentence = GPGLL{}
 // ParseGPGLL parses a GPGLL sentence string and returns a pointer to a GPGLL struct (or an error if
 // the sentence is invalid).
 func ParseGPGLL(s string) (*GPGLL, error) {
-	var err error
-
-	segments := &sentence.SegmentParser{}
-	if err = segments.Parse(s); err != nil {
-		return nil, err
-	}
-
-	var northSouth NorthSouth
-	if northSouth, err = NorthSouthString(segments.AsString(2)); err != nil {
-		return nil, err
-	}
-
-	var eastWest EastWest
-	if eastWest, err = EastWestString(segments.AsString(4)); err != nil {
-		return nil, err
-	}
-
-	var dataStatus DataStatus
-	if dataStatus, err = DataStatusString(segments.AsString(6)); err != nil {
-		return nil, err
-	}
-
-	var mode Mode
-	if mode, err = ModeString(segments.AsString(7)); err != nil {
+	segments := &SegmentParser{}
+	if err := segments.Parse(s); err != nil {
 		return nil, err
 	}
 
 	_ = segments.RequireString(0, "GPGLL") // Verify sentence type
 	gpgll := &GPGLL{
 		Latitude:   segments.AsFloat64(1),
-		NorthSouth: northSouth,
+		NorthSouth: segments.AsNorthSouth(2),
 		Longitude:  segments.AsFloat64(3),
-		EastWest:   eastWest,
+		EastWest:   segments.AsEastWest(4),
 		FixTime:    segments.AsFloat32(5),
-		DataStatus: dataStatus,
-		Mode:       mode,
+		DataStatus: segments.AsDataStatus(6),
+		Mode:       segments.AsMode(7),
 	}
 
-	if err = segments.Err(); err != nil {
+	if err := segments.Err(); err != nil {
 		return nil, err
 	}
 
