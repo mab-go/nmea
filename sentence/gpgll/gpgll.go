@@ -117,14 +117,17 @@ var _ sentence.NMEASentence = GPGLL{}
 // ParseGPGLL parses a GPGLL sentence string and returns a pointer to a GPGLL struct (or an error if
 // the sentence is invalid).
 func ParseGPGLL(s string) (*GPGLL, error) {
+	var err error
+
 	segments := &sentence.SegmentParser{}
-	if err := segments.Parse(s); err != nil {
+	if err = segments.Parse(s); err != nil {
 		return nil, err
 	}
 
 	nsStr := segments.RequireStrings(2, NorthSouthStrings())
-	northSouth, err := NorthSouthString(nsStr)
-	if err != nil {
+
+	var northSouth NorthSouth
+	if northSouth, err = NorthSouthString(nsStr); err != nil {
 		return nil, err
 	}
 
