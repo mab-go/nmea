@@ -6,67 +6,6 @@ import (
 	"gopkg.in/mab-go/nmea.v0/sentence"
 )
 
-// NorthSouth indicates the hemisphere in which a latitude value resides. It can be either
-// "N" or "S".
-type NorthSouth int
-
-const (
-	// North represents the northern hemisphere.
-	North NorthSouth = iota
-
-	// South represents the southern hemisphere.
-	South
-)
-
-//go:generate enumer -type=NorthSouth -text -sql -json -yaml -transform=first-upper -output=enum_northsouth_gen.go
-
-// EastWest indicates the hemisphere in which a longitude value resides. It can be either
-// "E" or "W".
-type EastWest string
-
-//goland:noinspection GoUnusedConst
-const (
-	// East represents the northern hemisphere.
-	East EastWest = "E"
-
-	// West represents the southern hemisphere.
-	West EastWest = "W"
-)
-
-// DataStatus represents the status of a GPS fix. It can be either "A" (valid) or
-// "V" (invalid).
-type DataStatus string
-
-const (
-	// ValidDataStatus represents a valid GPS fix.
-	ValidDataStatus DataStatus = "A"
-
-	// InvalidDataStatus represents an invalid GPS fix.
-	InvalidDataStatus DataStatus = "V"
-)
-
-// Mode indicates the operating mode of a positioning system. It can be one of "A", "D",
-// "E", "M", or "N".
-type Mode string
-
-//goland:noinspection GoUnusedConst
-const (
-	// AutonomousMode represents an autonomous operating mode.
-	AutonomousMode Mode = "A"
-
-	// DifferentialMode represents a differential operating mode.
-	DifferentialMode Mode = "D"
-
-	// EstimatedMode represents an estimated (dead reckoning) operating mode.
-	EstimatedMode Mode = "E"
-
-	// ManualInputMode represents a "manual input" operating mode.
-	ManualInputMode Mode = "M"
-
-	// InvalidMode represents an invalid operating mode.
-	InvalidMode Mode = "N"
-)
-
 // @formatter:off
 
 // GPGLL represents an NMEA sentence of type "GPGLL".
@@ -129,17 +68,30 @@ func ParseGPGLL(s string) (*GPGLL, error) {
 		return nil, err
 	}
 
-	eastWest := []string{string(East), string(West)}
+	var eastWest EastWest
+	if eastWest, err = EastWestString(segments.AsString(4)); err != nil {
+		return nil, err
+	}
+
+	var dataStatus DataStatus
+	if dataStatus, err = DataStatusString(segments.AsString(6)); err != nil {
+		return nil, err
+	}
+
+	var mode Mode
+	if mode, err = ModeString(segments.AsString(7)); err != nil {
+		return nil, err
+	}
 
 	_ = segments.RequireString(0, "GPGLL") // Verify sentence type
 	gpgll := &GPGLL{
 		Latitude:   segments.AsFloat64(1),
 		NorthSouth: northSouth,
 		Longitude:  segments.AsFloat64(3),
-		EastWest:   EastWest(segments.RequireStrings(4, eastWest)),
+		EastWest:   eastWest,
 		FixTime:    segments.AsFloat32(5),
-		// DataStatus: false,
-		// Mode:       false,
+		DataStatus: dataStatus,
+		Mode:       mode,
 	}
 
 	if err = segments.Err(); err != nil {

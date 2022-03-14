@@ -1,39 +1,50 @@
-"NMEA Simulator [1/4]":
-    Sentence: "$GPGLL,3157.905722,S,11551.681852,E,215052.603,A*27"
+"NMEA Simulator (Modified) [1/4]":
+    Sentence: "$GPGLL,3157.905722,S,11551.681852,E,215052.603,A,D*4F"
     Latitude: 3157.905722
     NorthSouth: "S"
     Longitude: 11551.681852
-    EastWest: "?"
+    EastWest: "E"
     FixTime: 215052.603
-    DataStatus: "?"
-    Mode: "?"
+    DataStatus: "A"
+    Mode: "D"
 
-"NMEA Simulator [2/4]":
-    Sentence: "$GPGLL,3157.905722,S,11551.681852,E,215102.604,A*24"
+"NMEA Simulator (Modified) [2/4]":
+    Sentence: "$GPGLL,3157.905722,S,11551.681852,E,215102.604,A,E*4D"
     Latitude: 3157.905722
     NorthSouth: "S"
     Longitude: 11551.681852
-    EastWest: "?"
+    EastWest: "E"
     FixTime: 215102.604
-    DataStatus: "?"
-    Mode: "?"
+    DataStatus: "A"
+    Mode: "E"
 
-"NMEA Simulator [3/4]":
-    Sentence: "$GPGLL,3726.489023,N,12212.446039,W,214827.478,A*2D"
+"NMEA Simulator (Modified) [3/4]":
+    Sentence: "$GPGLL,3726.489023,N,12212.446039,W,214827.478,A,M*4C"
     Latitude: 3726.489023
     NorthSouth: "N"
     Longitude: 12212.446039
-    EastWest: "?"
+    EastWest: "W"
     FixTime: 214827.478
-    DataStatus: "?"
-    Mode: "?"
+    DataStatus: "A"
+    Mode: "M"
 
-"NMEA Simulator [4/4]":
-    Sentence: "$GPGLL,3726.489023,N,12212.446039,W,214916.479,A*2F"
+"NMEA Simulator (Modified) [4/4]":
+    Sentence: "$GPGLL,3726.489023,N,12212.446039,W,214916.479,A,A*42"
     Latitude: 3726.489023
     NorthSouth: "N"
     Longitude: 12212.446039
-    EastWest: "?"
+    EastWest: "W"
     FixTime: 214916.479
-    DataStatus: "?"
-    Mode: "?"
+    DataStatus: "A"
+    Mode: "A"
+
+# Example from https://www.rfwireless-world.com/Terminology/GPS-sentences-or-NMEA-sentences.html
+"RF Wireless World Example":
+    Sentence: "$GPGLL,3723.2475,N,12158.3416,W,161229.487,A,A*41"
+    Latitude: 3723.2475
+    NorthSouth: "N"
+    Longitude: 12158.3416
+    EastWest: "W"
+    FixTime: 161229.487
+    DataStatus: "A"
+    Mode: "A"
