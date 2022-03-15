@@ -6,10 +6,10 @@ type NorthSouth int
 
 const (
 	// North represents the northern hemisphere.
-	North NorthSouth = iota
+	North NorthSouth = iota + 1 // N
 
 	// South represents the southern hemisphere.
-	South
+	South // S
 )
 
 // EastWest indicates the hemisphere in which a longitude value resides. It can be either
@@ -18,10 +18,10 @@ type EastWest int
 
 const (
 	// East represents the eastern hemisphere.
-	East EastWest = iota
+	East EastWest = iota + 1 // E
 
 	// West represents the western hemisphere.
-	West
+	West // W
 )
 
 // DataStatus represents the status of a GPS fix. It can be either "A" (valid) or
@@ -30,7 +30,7 @@ type DataStatus int
 
 const (
 	// ValidDataStatus represents a valid GPS fix.
-	ValidDataStatus DataStatus = iota // A
+	ValidDataStatus DataStatus = iota + 1 // A
 
 	// InvalidDataStatus represents an invalid GPS fix.
 	InvalidDataStatus // V
@@ -42,7 +42,7 @@ type Mode int
 
 const (
 	// AutonomousMode represents an autonomous operating mode.
-	AutonomousMode Mode = iota // A
+	AutonomousMode Mode = iota + 1 // A
 
 	// DifferentialMode represents a differential operating mode.
 	DifferentialMode // D

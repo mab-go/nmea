@@ -14,8 +14,9 @@ var _NorthSouthIndex = [...]uint8{0, 1, 2}
 const _NorthSouthLowerName = "ns"
 
 func (i NorthSouth) String() string {
+	i -= 1
 	if i < 0 || i >= NorthSouth(len(_NorthSouthIndex)-1) {
-		return fmt.Sprintf("NorthSouth(%d)", i)
+		return fmt.Sprintf("NorthSouth(%d)", i+1)
 	}
 	return _NorthSouthName[_NorthSouthIndex[i]:_NorthSouthIndex[i+1]]
 }
@@ -24,8 +25,8 @@ func (i NorthSouth) String() string {
 // Re-run the stringer command to generate them again.
 func _NorthSouthNoOp() {
 	var x [1]struct{}
-	_ = x[North-(0)]
-	_ = x[South-(1)]
+	_ = x[North-(1)]
+	_ = x[South-(2)]
 }
 
 var _NorthSouthValues = []NorthSouth{North, South}
@@ -96,8 +97,9 @@ var _EastWestIndex = [...]uint8{0, 1, 2}
 const _EastWestLowerName = "ew"
 
 func (i EastWest) String() string {
+	i -= 1
 	if i < 0 || i >= EastWest(len(_EastWestIndex)-1) {
-		return fmt.Sprintf("EastWest(%d)", i)
+		return fmt.Sprintf("EastWest(%d)", i+1)
 	}
 	return _EastWestName[_EastWestIndex[i]:_EastWestIndex[i+1]]
 }
@@ -106,8 +108,8 @@ func (i EastWest) String() string {
 // Re-run the stringer command to generate them again.
 func _EastWestNoOp() {
 	var x [1]struct{}
-	_ = x[East-(0)]
-	_ = x[West-(1)]
+	_ = x[East-(1)]
+	_ = x[West-(2)]
 }
 
 var _EastWestValues = []EastWest{East, West}
@@ -178,8 +180,9 @@ var _DataStatusIndex = [...]uint8{0, 1, 2}
 const _DataStatusLowerName = "av"
 
 func (i DataStatus) String() string {
+	i -= 1
 	if i < 0 || i >= DataStatus(len(_DataStatusIndex)-1) {
-		return fmt.Sprintf("DataStatus(%d)", i)
+		return fmt.Sprintf("DataStatus(%d)", i+1)
 	}
 	return _DataStatusName[_DataStatusIndex[i]:_DataStatusIndex[i+1]]
 }
@@ -188,8 +191,8 @@ func (i DataStatus) String() string {
 // Re-run the stringer command to generate them again.
 func _DataStatusNoOp() {
 	var x [1]struct{}
-	_ = x[ValidDataStatus-(0)]
-	_ = x[InvalidDataStatus-(1)]
+	_ = x[ValidDataStatus-(1)]
+	_ = x[InvalidDataStatus-(2)]
 }
 
 var _DataStatusValues = []DataStatus{ValidDataStatus, InvalidDataStatus}
@@ -253,15 +256,16 @@ func (i *DataStatus) UnmarshalText(text []byte) error {
 	return err
 }
 
-const _ModeName = "ADEM\""
+const _ModeName = "ADEMN"
 
 var _ModeIndex = [...]uint8{0, 1, 2, 3, 4, 5}
 
-const _ModeLowerName = "adem\""
+const _ModeLowerName = "ademn"
 
 func (i Mode) String() string {
+	i -= 1
 	if i < 0 || i >= Mode(len(_ModeIndex)-1) {
-		return fmt.Sprintf("Mode(%d)", i)
+		return fmt.Sprintf("Mode(%d)", i+1)
 	}
 	return _ModeName[_ModeIndex[i]:_ModeIndex[i+1]]
 }
@@ -270,11 +274,11 @@ func (i Mode) String() string {
 // Re-run the stringer command to generate them again.
 func _ModeNoOp() {
 	var x [1]struct{}
-	_ = x[AutonomousMode-(0)]
-	_ = x[DifferentialMode-(1)]
-	_ = x[EstimatedMode-(2)]
-	_ = x[ManualInputMode-(3)]
-	_ = x[InvalidMode-(4)]
+	_ = x[AutonomousMode-(1)]
+	_ = x[DifferentialMode-(2)]
+	_ = x[EstimatedMode-(3)]
+	_ = x[ManualInputMode-(4)]
+	_ = x[InvalidMode-(5)]
 }
 
 var _ModeValues = []Mode{AutonomousMode, DifferentialMode, EstimatedMode, ManualInputMode, InvalidMode}

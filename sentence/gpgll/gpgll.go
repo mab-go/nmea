@@ -1,6 +1,6 @@
 // Package gpgll contains data structures and functions related to NMEA sentences
 // of type "GPGLL".
-package gpgll // import "gopkg.in/mab-go/nmea.v0/input/gpgll"
+package gpgll // import "gopkg.in/mab-go/nmea.v0/sentence/gpgll"
 
 import (
 	"gopkg.in/mab-go/nmea.v0/sentence"
