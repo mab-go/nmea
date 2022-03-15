@@ -75,6 +75,41 @@ var goodTestData = map[string]testVec{
 	},
 }
 
+var badTestData = map[string]testVec{
+	"Bad SentenceType": {
+		input:  "$GPFOO,3723.2475,N,12158.3416,W,161229.487,A,A*40",
+		errMsg: "sentence segment [0] must be \"GPGLL\" (case insensitive) but was \"GPFOO\"",
+	},
+	"Bad Latitude": {
+		input:  "$GPGLL,bad_Latitude,N,12158.3416,W,161229.487,A,A*66",
+		errMsg: "sentence segment [1] must be parsable as a float64 but was \"bad_Latitude\"",
+	},
+	"Bad NorthSouth": {
+		input:  "$GPGLL,3723.2475,bad_NorthSouth,12158.3416,W,161229.487,A,A*2D",
+		errMsg: "sentence segment [2] must be parsable as a NorthSouth but was \"bad_NorthSouth\"",
+	},
+	"Bad Longitude": {
+		input:  "$GPGLL,3723.2475,N,bad_Longitude,W,161229.487,A,A*2B",
+		errMsg: "sentence segment [3] must be parsable as a float64 but was \"bad_Longitude\"",
+	},
+	"Bad EastWest": {
+		input:  "$GPGLL,3723.2475,N,12158.3416,bad_EastWest,161229.487,A,A*38",
+		errMsg: "sentence segment [4] must be parsable as an EastWest but was \"bad_EastWest\"",
+	},
+	"Bad FixTime": {
+		input:  "$GPGLL,3723.2475,N,12158.3416,W,bad_FixTime,A,A*01",
+		errMsg: "sentence segment [5] must be parsable as a float32 but was \"bad_FixTime\"",
+	},
+	"Bad DataStatus": {
+		input:  "$GPGLL,3723.2475,N,12158.3416,W,161229.487,bad_DataStatus,A*3C",
+		errMsg: "sentence segment [6] must be parsable as a DataStatus but was \"bad_DataStatus\"",
+	},
+	"Bad Mode": {
+		input:  "$GPGLL,3723.2475,N,12158.3416,W,161229.487,A,bad_Mode*1B",
+		errMsg: "sentence segment [7] must be parsable as a Mode but was \"bad_Mode\"",
+	},
+}
+
 func assertMatches(t *testing.T, title, field string, expected, actual interface{}) {
 	if actual != expected {
 		t.Errorf("%s should have been %v but was %v for NMEA input \"%v\"", field, expected, actual, title)
@@ -86,8 +121,7 @@ func TestParse_goodData(t *testing.T) {
 		t.Run(title, func(t *testing.T) {
 			actual, err := Parse(vec.input)
 			if err != nil {
-				t.Errorf("error creating GPGLL from NMEA input \"%v\": %v", title, err)
-				return
+				t.Fatalf("error creating GPGLL from NMEA input \"%v\": %v", title, err)
 			}
 
 			expected := vec.expected
@@ -98,6 +132,41 @@ func TestParse_goodData(t *testing.T) {
 			assertMatches(t, title, "FixTime", expected.FixTime, actual.FixTime)
 			assertMatches(t, title, "DataStatus", expected.DataStatus, actual.DataStatus)
 			assertMatches(t, title, "Mode", expected.Mode, actual.Mode)
+		})
+	}
+}
+
+func TestParse_invalidChecksum(t *testing.T) {
+	gpgga, err := Parse("$GPGLL,3723.2475,N,12158.3416,W,161229.487,A,A*FE")
+	if err == nil {
+		t.Error("checksum verification passed (but should not have)")
+	}
+
+	if gpgga != nil {
+		t.Errorf("Parse result was incorrect, got: %v, want: %v", gpgga, nil)
+	}
+
+	expected := "calculated checksum value \"41\" does not match sentence-specified value of \"FE\""
+	if err.Error() != expected {
+		t.Errorf("err.Error() is incorrect, got: %v, want: %v", err.Error(), expected)
+	}
+}
+
+func TestParse_badSegments(t *testing.T) {
+	for title, vec := range badTestData {
+		t.Run(title, func(t *testing.T) {
+			gpgga, err := Parse(vec.input)
+			if err == nil {
+				t.Fatalf("parsing succeeded (but should not have) for test sentence %q", title)
+			}
+
+			if gpgga != nil {
+				t.Fatalf("result should have been <nil> but was %v for test sentence %q", gpgga, title)
+			}
+
+			if err.Error() != vec.errMsg {
+				t.Fatalf("error message should have been '%v' but was '%v' for test sentence %q", vec.errMsg, err.Error(), title)
+			}
 		})
 	}
 }

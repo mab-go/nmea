@@ -6,70 +6,8 @@ import (
 	"gopkg.in/mab-go/nmea.v0/sentence"
 )
 
-// NorthSouth indicates the hemisphere in which a latitude value resides. It can be either
-// "N" or "S".
-type NorthSouth string
-
-const (
-	// North represents the northern hemisphere.
-	North NorthSouth = "N"
-
-	// South represents the southern hemisphere.
-	South NorthSouth = "S"
-)
-
-// EastWest indicates the hemisphere in which a longitude value resides. It can be either
-// "E" or "W".
-type EastWest string
-
-const (
-	// East represents the northern hemisphere.
-	East EastWest = "E"
-
-	// West represents the southern hemisphere.
-	West EastWest = "W"
-)
-
-// FixQuality indicates the type/quality of a GPS fix.
-type FixQuality int8
-
-//goland:noinspection GoUnusedConst
-const (
-	// InvalidFixQuality represents an invalid GPS fix quality. Its value is 0.
-	InvalidFixQuality FixQuality = 0
-
-	// GPSFixQuality represents a standard GPS fix quality. Its value is 1.
-	GPSFixQuality FixQuality = 1
-
-	// DGPSFixQuality represents a differential GPS (DGPS) fix quality. Its value is 2.
-	DGPSFixQuality FixQuality = 2
-
-	// PPSFixQuality represents a precise positioning system (PPS) fix quality. Its value is 3.
-	PPSFixQuality FixQuality = 3
-
-	// RTKFixQuality represents a Real Time Kinematic fix quality. Its value is 4.
-	RTKFixQuality FixQuality = 4
-
-	// FloatRTKFixQuality represents a Float Real Time Kinematic fix quality. Its value is 5.
-	FloatRTKFixQuality FixQuality = 5
-
-	// EstimatedFixQuality represents an estimated (dead reckoning) fix quality. Its value is 6.
-	EstimatedFixQuality FixQuality = 6
-
-	// ManualInputFixQuality represents a "manual input mode" fix quality. Its value is 7.
-	ManualInputFixQuality FixQuality = 7
-
-	// SimulationFixQuality represents a "simulation mode" fix quality. Its value is 8.
-	SimulationFixQuality FixQuality = 8
-)
-
-// @formatter:off
-
 // GPGGA represents an NMEA sentence of type "GPGGA".
-type GPGGA struct { // nolint: maligned
-
-	// @formatter:on
-
+type GPGGA struct {
 	// FixTime is the time at which the GPS fix was acquired. The format is (h)hmmss.sss. For
 	// example, the value 174831.864 represents the time 17:48:31.864. It is element [1] of a
 	// GPGGA sentence.
@@ -146,26 +84,22 @@ func (g GPGGA) GetSentenceType() string {
 // Ensure that GPGGA properly implements the NMEASentence interface
 var _ sentence.NMEASentence = GPGGA{}
 
-// ParseGPGGA parses a GPGGA sentence string and returns a pointer to a GPGGA struct (or an error if
+// Parse parses a GPGGA sentence string and returns a pointer to a GPGGA struct (or an error if
 // the sentence is invalid).
-func ParseGPGGA(s string) (*GPGGA, error) {
-	segments := &sentence.SegmentParser{}
+func Parse(s string) (*GPGGA, error) {
+	segments := &SegmentParser{}
 	if err := segments.Parse(s); err != nil {
 		return nil, err
 	}
-
-	northSouth := []string{string(North), string(South)}
-	eastWest := []string{string(East), string(West)}
-	// dataStatuses := []string{string()}
 
 	_ = segments.RequireString(0, "GPGGA") // Verify sentence type
 	gpgga := &GPGGA{
 		FixTime:        segments.AsFloat32(1),
 		Latitude:       segments.AsFloat64(2),
-		NorthSouth:     NorthSouth(segments.RequireStrings(3, northSouth)),
+		NorthSouth:     segments.AsNorthSouth(3),
 		Longitude:      segments.AsFloat64(4),
-		EastWest:       EastWest(segments.RequireStrings(5, eastWest)),
-		FixQuality:     FixQuality(segments.AsInt8InRange(6, 0, 8)),
+		EastWest:       segments.AsEastWest(5),
+		FixQuality:     segments.AsFixQuality(6),
 		SatCount:       segments.AsInt8(7),
 		HDOP:           segments.AsFloat32(8),
 		Altitude:       segments.AsFloat32(9),

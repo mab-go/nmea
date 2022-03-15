@@ -1,4 +1,4 @@
-package gpgll
+package gpgga
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"gopkg.in/mab-go/nmea.v0/sentence"
 )
 
-// SegmentParser extends sentence.SegmentParser to provide GPGLL-specific segment parsing methods.
+// SegmentParser extends sentence.SegmentParser to provide GPGGA-specific segment parsing methods.
 type SegmentParser struct {
 	sentence.SegmentParser
 
@@ -51,30 +51,16 @@ func (p *SegmentParser) AsEastWest(i int8) EastWest {
 	}
 }
 
-// AsDataStatus parses the input segment at the specified index as a DataStatus value. If p.Err()
-// is not nil, this function returns DataStatus(0) and leaves the error unchanged.
-func (p *SegmentParser) AsDataStatus(i int8) DataStatus {
-	if ds, err := DataStatusString(p.AsString(i)); err != nil {
+// AsFixQuality parses the input segment at the specified index as a FixQuality value. If p.Err()
+// is not nil, this function returns FixQuality(0) and leaves the error unchanged.
+func (p *SegmentParser) AsFixQuality(i int8) FixQuality {
+	if ds, err := FixQualityString(p.AsString(i)); err != nil {
 		p.err = &sentence.ParsingError{
 			Segment: i,
-			Message: fmt.Sprintf("must be parsable as a DataStatus but was \"%s\"", p.AsString(i)),
+			Message: fmt.Sprintf("must be parsable as a FixQuality but was \"%s\"", p.AsString(i)),
 		}
-		return DataStatus(0)
+		return FixQuality(0)
 	} else {
 		return ds
-	}
-}
-
-// AsMode parses the input segment at the specified index as a Mode value. If p.Err() is not
-// nil, this function returns Mode(0) and leaves the error unchanged.
-func (p *SegmentParser) AsMode(i int8) Mode {
-	if m, err := ModeString(p.AsString(i)); err != nil {
-		p.err = &sentence.ParsingError{
-			Segment: i,
-			Message: fmt.Sprintf("must be parsable as a Mode but was \"%s\"", p.AsString(i)),
-		}
-		return Mode(0)
-	} else {
-		return m
 	}
 }
