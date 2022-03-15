@@ -14,6 +14,7 @@ import (
 // a runtime panic occurs.
 func EnsureFloat32(v interface{}) float32 {
 	f := EnsureFloat64(v)
+
 	return float32(f)
 }
 
@@ -21,6 +22,7 @@ func EnsureFloat32(v interface{}) float32 {
 // it returns the type's zero-value (0).
 func OptFloat32(v interface{}) float32 {
 	f := OptFloat64(v)
+
 	return float32(f)
 }
 
@@ -56,6 +58,7 @@ func OptInt(v interface{}) int {
 // a runtime panic occurs.
 func EnsureInt8(v interface{}) int8 {
 	i := EnsureInt(v)
+
 	return int8(i)
 }
 
@@ -63,6 +66,7 @@ func EnsureInt8(v interface{}) int8 {
 // the type's zero-value (0).
 func OptInt8(v interface{}) int8 {
 	i := OptInt(v)
+
 	return int8(i)
 }
 
@@ -70,6 +74,7 @@ func OptInt8(v interface{}) int8 {
 // a runtime panic occurs.
 func EnsureInt16(v interface{}) int16 {
 	i := EnsureInt(v)
+
 	return int16(i)
 }
 
@@ -77,6 +82,7 @@ func EnsureInt16(v interface{}) int16 {
 // the type's zero-value (0).
 func OptInt16(v interface{}) int16 {
 	i := OptInt(v)
+
 	return int16(i)
 }
 
@@ -125,7 +131,7 @@ func ReadTestData(
 		panic(err)
 	}
 
-	var result []interface{}
+	result := make([]interface{}, len(input))
 	for k, v := range input {
 		result = append(result, mapFn(k, v))
 	}

@@ -50,6 +50,7 @@ func (p *SegmentParser) AsFloat32(i int8) float32 {
 			Segment: i,
 			Message: fmt.Sprintf("must be parsable as a float32 but was \"%s\"", p.segments[i]),
 		}
+
 		return 0
 	} else {
 		return float32(val)
@@ -70,6 +71,7 @@ func (p *SegmentParser) AsFloat64(i int8) float64 {
 			Segment: i,
 			Message: fmt.Sprintf("must be parsable as a float64 but was \"%s\"", p.segments[i]),
 		}
+
 		return 0
 	} else {
 		return val
@@ -79,8 +81,7 @@ func (p *SegmentParser) AsFloat64(i int8) float64 {
 // AsInt8 parses the sentence segment at the specified index as an int8 value. If p.Err() is not
 // nil, this function returns 0 and leaves the error unchanged.
 func (p *SegmentParser) AsInt8(i int8) int8 {
-	val := p.asInt(i, 8)
-	if val == 0 {
+	if val := p.asInt(i, 8); val == 0 {
 		return int8(val.(int))
 	}
 
@@ -105,6 +106,7 @@ func (p *SegmentParser) AsInt8InRange(i int8, l int8, u int8) int8 {
 			Segment: i,
 			Message: fmt.Sprintf("must be within range [%d, %d] but was %s", l, u, p.segments[i]),
 		}
+
 		return 0
 	}
 
@@ -114,8 +116,7 @@ func (p *SegmentParser) AsInt8InRange(i int8, l int8, u int8) int8 {
 // AsInt16 parses the sentence segment at the specified index as an int32 value. If p.Err() is not
 // nil, this function returns 0 and leaves the error unchanged.
 func (p *SegmentParser) AsInt16(i int8) int16 {
-	val := p.asInt(i, 16)
-	if val == 0 {
+	if val := p.asInt(i, 16); val == 0 {
 		return int16(val.(int))
 	}
 
@@ -125,8 +126,7 @@ func (p *SegmentParser) AsInt16(i int8) int16 {
 // AsInt32 parses the sentence segment at the specified index as an int32 value. If p.Err() is not
 // nil, this function returns 0 and leaves the error unchanged.
 func (p *SegmentParser) AsInt32(i int8) int32 {
-	val := p.asInt(i, 32)
-	if val == 0 {
+	if val := p.asInt(i, 32); val == 0 {
 		return int32(val.(int))
 	}
 
@@ -146,15 +146,9 @@ func (p *SegmentParser) AsString(i int8) string {
 
 	if p.segments[i] == "" {
 		return ""
-		// } else if val, ok := interface{}(p.segments[i]).(string); !ok {
-		// 	p.err = &ParsingError{
-		// 		Segment: i,
-		// 		Message: fmt.Sprintf("must be parsable as a string but was \"%s\"", p.segments[i]),
-		// 	}
-		// 	return ""
-	} else {
-		return fmt.Sprintf("%s", p.segments[i])
 	}
+
+	return p.segments[i]
 }
 
 // RequireString parses the sentence segment at the specified index as a string value and ensures
@@ -165,11 +159,12 @@ func (p *SegmentParser) RequireString(i int8, s string) string {
 		return ""
 	}
 
-	if strings.ToUpper(s) != strings.ToUpper(p.segments[i]) {
+	if strings.EqualFold(s, p.segments[i]) {
 		p.err = &ParsingError{
 			Segment: i,
 			Message: fmt.Sprintf("must be \"%s\" (case insensitive) but was \"%s\"", s, p.segments[i]),
 		}
+
 		return ""
 	}
 
@@ -185,7 +180,7 @@ func (p *SegmentParser) RequireStrings(i int8, s []string) string {
 	}
 
 	for _, st := range s {
-		if strings.ToUpper(st) == strings.ToUpper(p.segments[i]) {
+		if strings.EqualFold(st, p.segments[i]) {
 			return p.segments[i] // The value matches
 		}
 	}
@@ -217,6 +212,7 @@ func (p *SegmentParser) asInt(i int8, bitSize int) interface{} {
 			Segment: i,
 			Message: fmt.Sprintf("must be parsable as an int%d but was \"%s\"", bitSize, p.segments[i]),
 		}
+
 		return 0
 	} else {
 		switch bitSize {

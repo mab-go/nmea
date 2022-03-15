@@ -139,6 +139,7 @@ var badTestData = map[string]testVec{
 }
 
 func assertMatches(t *testing.T, title, field string, expected, actual interface{}) {
+	t.Helper()
 	if actual != expected {
 		t.Errorf("%s should have been %v but was %v for NMEA input \"%v\"", field, expected, actual, title)
 	}

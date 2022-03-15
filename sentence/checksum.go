@@ -32,7 +32,10 @@ func VerifyChecksum(sentence string) error {
 		if ch == "*" {
 			// There MUST be exactly two characters remaining
 			if (i + 2) != (len(sentence) - 1) {
-				return fmt.Errorf("there must be exactly 2 characters remaining after \"*\" but there was/were %v", len(sentence)-i-1)
+				return fmt.Errorf(
+					"there must be exactly 2 characters remaining after \"*\" but there was/were %v",
+					len(sentence)-i-1,
+				)
 			}
 
 			expectedHex := strings.ToUpper(fmt.Sprintf("%c%c", sentence[i+1], sentence[i+2]))
@@ -47,7 +50,7 @@ func VerifyChecksum(sentence string) error {
 			return nil // No errors
 		}
 
-		calculated = calculated ^ int(ch[0])
+		calculated ^= int(ch[0])
 	}
 
 	return errors.New("sentence does not contain a checksum")

@@ -68,8 +68,7 @@ func TestSegmentParser_Err(t *testing.T) {
 func TestSegmentParser_AsFloat32(t *testing.T) {
 	sentence := "$GPGGA,183730,3907.356,N,12102.482,W,1,05,1.6,646.4,M,-24.1,M,,*75"
 	parser := &SegmentParser{}
-	err := parser.Parse(sentence)
-	if err != nil {
+	if err := parser.Parse(sentence); err != nil {
 		t.Errorf("segment parsing failed: %v", err)
 	}
 
