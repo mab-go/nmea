@@ -1,6 +1,6 @@
 # --- Malformed Sentences ------------------------------------------------------
 
-"GPGSA without '$'":
+"GPGSA without $":
     Sentence: "GPGSA,A,3,02,,,07,,09,24,26,,,,,1.6,1.6,1.0*3D"
     ErrMsg: "character [0] must be \"$\" but was \"G\""
 

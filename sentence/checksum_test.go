@@ -7,22 +7,42 @@ import (
 	"gopkg.in/mab-go/nmea.v0/sentence/testhelp"
 )
 
-// --- Test Functions ----------------------------------------------------------
+type checksumTestData struct {
+	Title, Sentence, ActualChecksum, AdvertisedChecksum, ErrMsg string
+}
 
-func TestVerifyChecksum(t *testing.T) {
-	// Test with good data
-	for _, d := range testhelp.ReadTestData("good/sentences") {
-		t.Run(fmt.Sprintf("Good Data/%s", d.Name), func(t *testing.T) {
+func mapChecksumTestData(title string, input map[string]interface{}) interface{} {
+	return checksumTestData{
+		Title:              title,
+		Sentence:           testhelp.EnsureString(input["Sentence"]),
+		ActualChecksum:     testhelp.OptString(input["ActualChecksum"]),
+		AdvertisedChecksum: testhelp.OptString(input["AdvertisedChecksum"]),
+		ErrMsg:             testhelp.OptString(input["ErrMsg"]),
+	}
+}
+
+func sortChecksumTestData(result []interface{}, i, j int) bool {
+	return result[i].(checksumTestData).Title < result[j].(checksumTestData).Title
+}
+
+func TestVerifyChecksum_goodData(t *testing.T) {
+	for _, data := range testhelp.ReadTestData("good-data", mapChecksumTestData, sortChecksumTestData) {
+		d := data.(checksumTestData)
+
+		t.Run(d.Title, func(t *testing.T) {
 			err := VerifyChecksum(d.Sentence)
 			if err != nil {
 				t.Errorf("checksum verification failed: %v", err)
 			}
 		})
 	}
+}
 
-	// Test with invalid checksums
-	for _, d := range testhelp.ReadTestData("bad/invalid-checksums") {
-		t.Run(fmt.Sprintf("Bad Data/Invalid Checksums/%s", d.Name), func(t *testing.T) {
+func TestVerifyChecksum_invalidChecksums(t *testing.T) {
+	for _, data := range testhelp.ReadTestData("bad-invalid-checksums", mapChecksumTestData, sortChecksumTestData) {
+		d := data.(checksumTestData)
+
+		t.Run(d.Title, func(t *testing.T) {
 			err := VerifyChecksum(d.Sentence)
 			if err == nil {
 				t.Error("checksum verification succeeded (but should not have)")
@@ -37,10 +57,13 @@ func TestVerifyChecksum(t *testing.T) {
 			}
 		})
 	}
+}
 
-	// Test with malformed sentences
-	for _, d := range testhelp.ReadTestData("bad/malformed") {
-		t.Run(fmt.Sprintf("Bad Data/Malformed Sentences/%s", d.Name), func(t *testing.T) {
+func TestVerifyChecksum_malformedData(t *testing.T) {
+	for _, data := range testhelp.ReadTestData("bad-malformed", mapChecksumTestData, sortChecksumTestData) {
+		d := data.(checksumTestData)
+
+		t.Run(d.Title, func(t *testing.T) {
 			err := VerifyChecksum(d.Sentence)
 			if err == nil {
 				t.Error("checksum verification succeeded (but should not have)")
@@ -52,8 +75,6 @@ func TestVerifyChecksum(t *testing.T) {
 		})
 	}
 }
-
-// --- Example Functions -------------------------------------------------------
 
 func ExampleVerifyChecksum_validSentence() {
 	err := VerifyChecksum("$GPGGA,174800.864,4002.741,N,07618.550,W,1,12,1.0,0.0,M,0.0,M,,*70")
