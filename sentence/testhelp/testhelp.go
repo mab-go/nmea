@@ -3,7 +3,7 @@
 package testhelp // import "github.com/mab-go/nmea/sentence/testhelp"
 
 import (
-	"io/ioutil"
+	"os"
 	"path"
 	"sort"
 
@@ -107,19 +107,19 @@ func OptString(v interface{}) string {
 //
 // Example:
 //
-//     // In 'foo/test_bar.go', read file 'foo/_testdata/good/sentences.yaml':
-//     type myInputType struct { /* ... */ }
-//     goodData := testhelp.ReadTestData("good/sentences", mapInput, sortInput)
-//	   for _, d := range goodData {
-//	       expected := d.(myInputType)
-//         // Use expected value in test...
-//     }
+//	    // In 'foo/test_bar.go', read file 'foo/_testdata/good/sentences.yaml':
+//	    type myInputType struct { /* ... */ }
+//	    goodData := testhelp.ReadTestData("good/sentences", mapInput, sortInput)
+//		   for _, d := range goodData {
+//		       expected := d.(myInputType)
+//	        // Use expected value in test...
+//	    }
 func ReadTestData(
 	name string,
 	mapFn func(title string, input map[string]interface{}) interface{},
 	sortFn func(result []interface{}, i, j int) bool,
 ) []interface{} {
-	contents, err := ioutil.ReadFile(path.Join("_testdata/", name+".yaml"))
+	contents, err := os.ReadFile(path.Join("_testdata/", name+".yaml"))
 	if err != nil {
 		panic(err)
 	}

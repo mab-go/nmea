@@ -175,9 +175,7 @@ func TestParse_badSegments(t *testing.T) {
 func ExampleParse() {
 	sentence := "$GPGLL,3723.2475,N,12158.3416,W,161229.487,A,A*41"
 	gpgll, err := Parse(sentence)
-	if err != nil {
-		// Handle error
-	}
+	_ = err
 
 	fmt.Printf("%+v", gpgll)
 	// Output:
