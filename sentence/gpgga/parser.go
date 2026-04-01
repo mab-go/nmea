@@ -3,7 +3,7 @@ package gpgga
 import (
 	"fmt"
 
-	"gopkg.in/mab-go/nmea.v0/sentence"
+	"github.com/mab-go/nmea/sentence"
 )
 
 // SegmentParser extends sentence.SegmentParser to provide GPGGA-specific segment parsing methods.

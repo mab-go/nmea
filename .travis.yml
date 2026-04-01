@@ -5,7 +5,7 @@ go:
     - 1.9
     - master
 
-go_import_path: gopkg.in/mab-go/nmea.v0
+go_import_path: github.com/mab-go/nmea
 
 matrix:
     # Allow failures on unstable development versions of Go.

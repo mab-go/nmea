@@ -1,6 +1,6 @@
 // Package testhelp contains helper functions and data structures used by unit
-// tests within the gopkg.in/mab-go/nmea.v0/sentence package.
-package testhelp // import "gopkg.in/mab-go/nmea.v0/sentence/testhelp"
+// tests within the github.com/mab-go/nmea/sentence package.
+package testhelp // import "github.com/mab-go/nmea/sentence/testhelp"
 
 import (
 	"io/ioutil"
@@ -131,7 +131,7 @@ func ReadTestData(
 		panic(err)
 	}
 
-	result := make([]interface{}, len(input))
+	result := make([]interface{}, 0, len(input))
 	for k, v := range input {
 		result = append(result, mapFn(k, v))
 	}

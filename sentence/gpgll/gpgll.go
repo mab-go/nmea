@@ -1,9 +1,9 @@
 // Package gpgll contains data structures and functions related to NMEA sentences
 // of type "GPGLL".
-package gpgll // import "gopkg.in/mab-go/nmea.v0/sentence/gpgll"
+package gpgll // import "github.com/mab-go/nmea/sentence/gpgll"
 
 import (
-	"gopkg.in/mab-go/nmea.v0/sentence"
+	"github.com/mab-go/nmea/sentence"
 )
 
 // GPGLL represents an NMEA input of type "$GPGLL". It contains a position fix location (latitude

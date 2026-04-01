@@ -3,7 +3,7 @@ package gpgll
 import (
 	"fmt"
 
-	"gopkg.in/mab-go/nmea.v0/sentence"
+	"github.com/mab-go/nmea/sentence"
 )
 
 // SegmentParser extends sentence.SegmentParser to provide GPGLL-specific segment parsing methods.

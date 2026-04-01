@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"gopkg.in/mab-go/nmea.v0/sentence/testhelp"
+	"github.com/mab-go/nmea/sentence/testhelp"
 )
 
 type checksumTestData struct {

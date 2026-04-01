@@ -1,9 +1,9 @@
 // Package gpgga contains data structures and functions related to NMEA sentences
 // of type "GPGGA".
-package gpgga // import "gopkg.in/mab-go/nmea.v0/sentence/gpgga"
+package gpgga // import "github.com/mab-go/nmea/sentence/gpgga"
 
 import (
-	"gopkg.in/mab-go/nmea.v0/sentence"
+	"github.com/mab-go/nmea/sentence"
 )
 
 // GPGGA represents an NMEA sentence of type "GPGGA".
