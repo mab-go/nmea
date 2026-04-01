@@ -159,7 +159,7 @@ func (p *SegmentParser) RequireString(i int8, s string) string {
 		return ""
 	}
 
-	if strings.EqualFold(s, p.segments[i]) {
+	if !strings.EqualFold(s, p.segments[i]) {
 		p.err = &ParsingError{
 			Segment: i,
 			Message: fmt.Sprintf("must be \"%s\" (case insensitive) but was \"%s\"", s, p.segments[i]),

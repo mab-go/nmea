@@ -1,6 +1,6 @@
 // Package sentence provides a set of interfaces and functions used to describe
 // and work with NMEA sentences.
-package sentence // import "gopkg.in/mab-go/nmea.v0/sentence"
+package sentence // import "github.com/mab-go/nmea/sentence"
 
 // NMEASentence describes the (minimum) functionality of a struct that represents
 // an NMEA sentence.
