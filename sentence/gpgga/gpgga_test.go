@@ -217,9 +217,7 @@ func TestGPGGA_GetSentenceType(t *testing.T) {
 func ExampleParse() {
 	sentence := "$GPGGA,023042,3907.3837,N,12102.4684,W,1,04,2.3,507.3,M,-24.1,M,,*75"
 	gpgga, err := Parse(sentence)
-	if err != nil {
-		// Handle error
-	}
+	_ = err
 
 	fmt.Printf("%+v", gpgga)
 	// Output:

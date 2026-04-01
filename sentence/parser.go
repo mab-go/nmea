@@ -45,16 +45,19 @@ func (p *SegmentParser) AsFloat32(i int8) float32 {
 
 	if p.segments[i] == "" {
 		return 0
-	} else if val, err := strconv.ParseFloat(p.segments[i], 32); err != nil {
+	}
+
+	val, err := strconv.ParseFloat(p.segments[i], 32)
+	if err != nil {
 		p.err = &ParsingError{
 			Segment: i,
 			Message: fmt.Sprintf("must be parsable as a float32 but was \"%s\"", p.segments[i]),
 		}
 
 		return 0
-	} else {
-		return float32(val)
 	}
+
+	return float32(val)
 }
 
 // AsFloat64 parses the sentence segment at the specified index as a float64 value. If p.Err() is
@@ -66,16 +69,19 @@ func (p *SegmentParser) AsFloat64(i int8) float64 {
 
 	if p.segments[i] == "" {
 		return 0
-	} else if val, err := strconv.ParseFloat(p.segments[i], 64); err != nil {
+	}
+
+	val, err := strconv.ParseFloat(p.segments[i], 64)
+	if err != nil {
 		p.err = &ParsingError{
 			Segment: i,
 			Message: fmt.Sprintf("must be parsable as a float64 but was \"%s\"", p.segments[i]),
 		}
 
 		return 0
-	} else {
-		return val
 	}
+
+	return val
 }
 
 // AsInt8 parses the sentence segment at the specified index as an int8 value. If p.Err() is not
@@ -207,27 +213,30 @@ func (p *SegmentParser) asInt(i int8, bitSize int) interface{} {
 
 	if p.segments[i] == "" {
 		return 0
-	} else if val, err := strconv.ParseInt(p.segments[i], 10, bitSize); err != nil {
+	}
+
+	val, err := strconv.ParseInt(p.segments[i], 10, bitSize)
+	if err != nil {
 		p.err = &ParsingError{
 			Segment: i,
 			Message: fmt.Sprintf("must be parsable as an int%d but was \"%s\"", bitSize, p.segments[i]),
 		}
 
 		return 0
-	} else {
-		switch bitSize {
-		case 8:
-			return int8(val)
-		case 16:
-			return int16(val)
-		case 32:
-			return int32(val)
-		case 64:
-			return val // Type is already int64
-		}
 	}
 
-	panic("should have returned (but did not) because bitSize was " + string(rune(bitSize)))
+	switch bitSize {
+	case 8:
+		return int8(val)
+	case 16:
+		return int16(val)
+	case 32:
+		return int32(val)
+	case 64:
+		return val // Type is already int64
+	}
+
+	panic("should have returned (but did not) because bitSize was " + fmt.Sprintf("%d", bitSize))
 }
 
 func (p *SegmentParser) checkInRange(i int8) {

@@ -1,27 +1,17 @@
+version: "2"
 linters:
   enable:
     - cyclop
-    - deadcode
     - decorder
     - depguard
-    - errcheck
     - errname
     - errorlint
     - exhaustive
-    - exportloopref
     - funlen
-    - gci
     - gocognit
     - gocritic
     - gocyclo
-    - goerr113    # NOTE: This is a good one... need to comply.
-    - goimports
-#    - gomnd    # NOTE: Probably not going to work since Parse functions all use segment ordinals
     - gosec
-    - gosimple
-    - govet
-    - ifshort
-    - ineffassign
     - ireturn
     - lll
     - maintidx
@@ -34,22 +24,46 @@ linters:
     - prealloc
     - revive
     - staticcheck
-    - structcheck
-    - stylecheck
     - thelper
-    - typecheck
     - unparam
-    - unused
-    - varcheck
     - wastedassign
-    - whitespace    # NOTE: This is a good one... need to comply.
-    - wrapcheck
-
-issues:
-  exclude-rules:
-    - path: "sentence/gpgll/enum.go"
-      linters:
-        - lll
-    - path: "(.+)_test\\.go"
-      linters:
-        - lll
+    - whitespace
+  settings:
+    depguard:
+      rules:
+        main:
+          allow:
+            - $gostd
+            - github.com/mab-go/nmea
+            - gopkg.in/yaml.v2
+    gosec:
+      excludes:
+        - G115
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - lll
+        path: sentence/gpgll/enum.go
+      - linters:
+          - lll
+        path: (.+)_test\.go
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gci
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
