@@ -3,6 +3,8 @@ package gpgll
 import (
 	"fmt"
 	"testing"
+
+	"github.com/mab-go/nmea/sentence"
 )
 
 type testVec struct {
@@ -19,7 +21,7 @@ var goodTestData = map[string]testVec{
 			NorthSouth: South,
 			Longitude:  11551.681852,
 			EastWest:   East,
-			FixTime:    215052.603,
+			FixTime:    sentence.NMEATime{Hour: 21, Minute: 50, Second: 52, Millisecond: 603},
 			DataStatus: ValidDataStatus,
 			Mode:       DifferentialMode,
 		},
@@ -31,7 +33,7 @@ var goodTestData = map[string]testVec{
 			NorthSouth: South,
 			Longitude:  11551.681852,
 			EastWest:   East,
-			FixTime:    215102.604,
+			FixTime:    sentence.NMEATime{Hour: 21, Minute: 51, Second: 2, Millisecond: 604},
 			DataStatus: ValidDataStatus,
 			Mode:       EstimatedMode,
 		},
@@ -43,7 +45,7 @@ var goodTestData = map[string]testVec{
 			NorthSouth: North,
 			Longitude:  12212.446039,
 			EastWest:   West,
-			FixTime:    214827.478,
+			FixTime:    sentence.NMEATime{Hour: 21, Minute: 48, Second: 27, Millisecond: 478},
 			DataStatus: ValidDataStatus,
 			Mode:       ManualInputMode,
 		},
@@ -55,7 +57,7 @@ var goodTestData = map[string]testVec{
 			NorthSouth: North,
 			Longitude:  12212.446039,
 			EastWest:   West,
-			FixTime:    214916.479,
+			FixTime:    sentence.NMEATime{Hour: 21, Minute: 49, Second: 16, Millisecond: 479},
 			DataStatus: ValidDataStatus,
 			Mode:       AutonomousMode,
 		},
@@ -68,7 +70,7 @@ var goodTestData = map[string]testVec{
 			NorthSouth: North,
 			Longitude:  12158.3416,
 			EastWest:   West,
-			FixTime:    161229.487,
+			FixTime:    sentence.NMEATime{Hour: 16, Minute: 12, Second: 29, Millisecond: 487},
 			DataStatus: ValidDataStatus,
 			Mode:       AutonomousMode,
 		},
@@ -98,7 +100,7 @@ var badTestData = map[string]testVec{
 	},
 	"Bad FixTime": {
 		input:  "$GPGLL,3723.2475,N,12158.3416,W,bad_FixTime,A,A*01",
-		errMsg: "sentence segment [5] must be parsable as a float32 but was \"bad_FixTime\"",
+		errMsg: "sentence segment [5] must be parsable as an NMEATime but was \"bad_FixTime\"",
 	},
 	"Bad DataStatus": {
 		input:  "$GPGLL,3723.2475,N,12158.3416,W,161229.487,bad_DataStatus,A*3C",
@@ -138,13 +140,13 @@ func TestParse_goodData(t *testing.T) {
 }
 
 func TestParse_invalidChecksum(t *testing.T) {
-	gpgga, err := Parse("$GPGLL,3723.2475,N,12158.3416,W,161229.487,A,A*FE")
+	gpgll, err := Parse("$GPGLL,3723.2475,N,12158.3416,W,161229.487,A,A*FE")
 	if err == nil {
 		t.Error("checksum verification passed (but should not have)")
 	}
 
-	if gpgga != nil {
-		t.Errorf("Parse result was incorrect, got: %v, want: %v", gpgga, nil)
+	if gpgll != nil {
+		t.Errorf("Parse result was incorrect, got: %v, want: %v", gpgll, nil)
 	}
 
 	expected := "calculated checksum value \"41\" does not match sentence-specified value of \"FE\""
@@ -156,13 +158,13 @@ func TestParse_invalidChecksum(t *testing.T) {
 func TestParse_badSegments(t *testing.T) {
 	for title, vec := range badTestData {
 		t.Run(title, func(t *testing.T) {
-			gpgga, err := Parse(vec.input)
+			gpgll, err := Parse(vec.input)
 			if err == nil {
 				t.Fatalf("parsing succeeded (but should not have) for test sentence %q", title)
 			}
 
-			if gpgga != nil {
-				t.Fatalf("result should have been <nil> but was %v for test sentence %q", gpgga, title)
+			if gpgll != nil {
+				t.Fatalf("result should have been <nil> but was %v for test sentence %q", gpgll, title)
 			}
 
 			if err.Error() != vec.errMsg {
@@ -180,11 +182,11 @@ func TestGPGLL_GetSentenceType(t *testing.T) {
 }
 
 func ExampleParse() {
-	sentence := "$GPGLL,3723.2475,N,12158.3416,W,161229.487,A,A*41"
-	gpgll, err := Parse(sentence)
+	s := "$GPGLL,3723.2475,N,12158.3416,W,161229.487,A,A*41"
+	gpgll, err := Parse(s)
 	_ = err
 
 	fmt.Printf("%+v", gpgll)
 	// Output:
-	// &{Latitude:3723.2475 NorthSouth:N Longitude:12158.3416 EastWest:W FixTime:161229.48 DataStatus:A Mode:A}
+	// &{Latitude:3723.2475 NorthSouth:N Longitude:12158.3416 EastWest:W FixTime:161229.487 DataStatus:A Mode:A}
 }

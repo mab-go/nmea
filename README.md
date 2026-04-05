@@ -57,7 +57,9 @@ NMEA 0183 sentence:
 
 - **`VerifyChecksum`** — validates the `*XX` checksum on a raw sentence string
 - **`SegmentParser`** — splits a sentence into typed fields (`AsFloat64`,
-  `AsInt16`, `AsString`, and more)
+  `AsInt16`, `AsString`, `AsNMEATime`, and more)
+- **`NMEATime`** — UTC fix time as hour/minute/second/millisecond (no float
+  precision loss)
 
 ---
 

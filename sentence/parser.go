@@ -139,6 +139,31 @@ func (p *SegmentParser) AsInt32(i int8) int32 {
 	return p.asInt(i, 32).(int32)
 }
 
+// AsNMEATime parses the sentence segment at the specified index as an NMEATime value. If p.Err()
+// is not nil, this function returns NMEATime{} and leaves the error unchanged. An empty segment
+// returns NMEATime{} with no error.
+func (p *SegmentParser) AsNMEATime(i int8) NMEATime {
+	if p.checkInRange(i); p.err != nil {
+		return NMEATime{}
+	}
+
+	if p.segments[i] == "" {
+		return NMEATime{}
+	}
+
+	t, err := parseNMEATime(p.segments[i])
+	if err != nil {
+		p.err = &ParsingError{
+			Segment: i,
+			Message: fmt.Sprintf("must be parsable as an NMEATime but was \"%s\"", p.segments[i]),
+		}
+
+		return NMEATime{}
+	}
+
+	return t
+}
+
 // AsString parses the sentence segment at the specified index as a string value. If p.Err() is not
 // nil, this function returns "" and leaves the error unchanged.
 func (p *SegmentParser) AsString(i int8) string {
