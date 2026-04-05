@@ -1,7 +1,14 @@
 {
     "cSpell.words": [
+        "gocyclo",
+        "goimports",
+        "golangci",
         "GPGGA",
         "GPGLL",
-        "NMEA"
+        "GPGSA",
+        "HDOP",
+        "NMEA",
+        "PDOP",
+        "VDOP"
     ]
 }
