@@ -8,10 +8,10 @@ import (
 
 // GPGGA represents an NMEA sentence of type "GPGGA".
 type GPGGA struct {
-	// FixTime is the time at which the GPS fix was acquired. The format is (h)hmmss.sss. For
-	// example, the value 174831.864 represents the time 17:48:31.864. It is element [1] of a
-	// GPGGA sentence.
-	FixTime float32
+	// FixTime is the time at which the GPS fix was acquired (typically UTC). It is element [1] of
+	// a GPGGA sentence. An empty time field yields a zero [sentence.NMEATime] without error. Wire
+	// format and validation: see [sentence.NMEATime].
+	FixTime sentence.NMEATime
 
 	// Latitude is the "latitude" component of a GPS fix. The format is (d)ddmm.mmmm. For example,
 	// the value 4807.038 represents a latitude value of 48° 7.038'. It is element [2] of a GPGGA
@@ -94,7 +94,7 @@ func Parse(s string) (*GPGGA, error) {
 
 	_ = segments.RequireString(0, "GPGGA") // Verify sentence type
 	gpgga := &GPGGA{
-		FixTime:        segments.AsFloat32(1),
+		FixTime:        segments.AsNMEATime(1),
 		Latitude:       segments.AsFloat64(2),
 		NorthSouth:     segments.AsNorthSouth(3),
 		Longitude:      segments.AsFloat64(4),

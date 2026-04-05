@@ -3,6 +3,8 @@ package gpgga
 import (
 	"fmt"
 	"testing"
+
+	"github.com/mab-go/nmea/sentence"
 )
 
 type testVec struct {
@@ -15,7 +17,7 @@ var goodTestData = map[string]testVec{
 	"NMEA Generator [1/1]": {
 		input: "$GPGGA,174800.864,4002.741,N,07618.550,W,1,12,1.0,0.0,M,0.0,M,,*70",
 		expected: GPGGA{
-			FixTime:        174800.864,
+			FixTime:        sentence.NMEATime{Hour: 17, Minute: 48, Second: 0, Millisecond: 864},
 			Latitude:       4002.741,
 			NorthSouth:     North,
 			Longitude:      7618.55,
@@ -32,7 +34,7 @@ var goodTestData = map[string]testVec{
 	"Garmin G12 (v 4.57)": {
 		input: "$GPGGA,183730,3907.356,N,12102.482,W,1,05,1.6,646.4,M,-24.1,M,300,123*76",
 		expected: GPGGA{
-			FixTime:        183730.0,
+			FixTime:        sentence.NMEATime{Hour: 18, Minute: 37, Second: 30, Millisecond: 0},
 			Latitude:       3907.356,
 			NorthSouth:     North,
 			Longitude:      12102.482,
@@ -51,7 +53,7 @@ var goodTestData = map[string]testVec{
 	"Garmin eTrex Summit": {
 		input: "$GPGGA,002454,3553.5295,N,13938.6570,E,1,05,2.2,18.3,M,39.0,M,,*7F",
 		expected: GPGGA{
-			FixTime:        2454.0,
+			FixTime:        sentence.NMEATime{Hour: 0, Minute: 24, Second: 54, Millisecond: 0},
 			Latitude:       3553.5295,
 			NorthSouth:     North,
 			Longitude:      13938.657,
@@ -74,7 +76,7 @@ var badTestData = map[string]testVec{
 	},
 	"Bad FixTime": {
 		input:  "$GPGGA,bad_FixTime,4002.741,N,07618.550,W,1,12,1.0,0.0,M,0.0,M,,*34",
-		errMsg: "sentence segment [1] must be parsable as a float32 but was \"bad_FixTime\"",
+		errMsg: "sentence segment [1] must be parsable as an NMEATime but was \"bad_FixTime\"",
 	},
 	"Bad Latitude": {
 		input:  "$GPGGA,174800.864,bad_Latitude,N,07618.550,W,1,12,1.0,0.0,M,0.0,M,,*62",
@@ -150,7 +152,7 @@ func TestParse_goodData(t *testing.T) {
 		t.Run(title, func(t *testing.T) {
 			actual, err := Parse(vec.input)
 			if err != nil {
-				t.Fatalf("error creating GPGLL from NMEA input \"%v\": %v", title, err)
+				t.Fatalf("error creating GPGGA from NMEA input \"%v\": %v", title, err)
 			}
 
 			expected := vec.expected
@@ -215,11 +217,11 @@ func TestGPGGA_GetSentenceType(t *testing.T) {
 }
 
 func ExampleParse() {
-	sentence := "$GPGGA,023042,3907.3837,N,12102.4684,W,1,04,2.3,507.3,M,-24.1,M,,*75"
-	gpgga, err := Parse(sentence)
+	s := "$GPGGA,023042,3907.3837,N,12102.4684,W,1,04,2.3,507.3,M,-24.1,M,,*75"
+	gpgga, err := Parse(s)
 	_ = err
 
 	fmt.Printf("%+v", gpgga)
 	// Output:
-	// &{FixTime:23042 Latitude:3907.3837 NorthSouth:N Longitude:12102.4684 EastWest:W FixQuality:1 SatCount:4 HDOP:2.3 Altitude:507.3 AltitudeUOM:M GeoidHeight:-24.1 GeoidHeightUOM:M DGPSUpdateAge:0 DGPSStationID:0}
+	// &{FixTime:023042.000 Latitude:3907.3837 NorthSouth:N Longitude:12102.4684 EastWest:W FixQuality:1 SatCount:4 HDOP:2.3 Altitude:507.3 AltitudeUOM:M GeoidHeight:-24.1 GeoidHeightUOM:M DGPSUpdateAge:0 DGPSStationID:0}
 }

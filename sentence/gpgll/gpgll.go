@@ -27,10 +27,10 @@ type GPGLL struct {
 	// a GPGLL input.
 	EastWest EastWest
 
-	// FixTime is the time at which the GPS fix was acquired. The format is (h)hmmss.sss. For
-	// example, the value 174831.864 represents the time 17:48:31.864. It is element [5] of a
-	// GPGLL input.
-	FixTime float32
+	// FixTime is the time at which the GPS fix was acquired (typically UTC). It is element [5] of
+	// a GPGLL input. An empty time field yields a zero [sentence.NMEATime] without error. Wire
+	// format and validation: see [sentence.NMEATime].
+	FixTime sentence.NMEATime
 
 	// DataStatus represents the status of the GPS fix. It can be either "A" (valid) or "V"
 	// (invalid). It is element [6] of a GPGLL input.
@@ -64,7 +64,7 @@ func Parse(s string) (*GPGLL, error) {
 		NorthSouth: segments.AsNorthSouth(2),
 		Longitude:  segments.AsFloat64(3),
 		EastWest:   segments.AsEastWest(4),
-		FixTime:    segments.AsFloat32(5),
+		FixTime:    segments.AsNMEATime(5),
 		DataStatus: segments.AsDataStatus(6),
 		Mode:       segments.AsMode(7),
 	}
