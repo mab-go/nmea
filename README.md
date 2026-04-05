@@ -1,35 +1,86 @@
-NMEA Toolkit (golang)
-=====================
+# mab-go/nmea
 
-A programming toolkit for interacting with NMEA data. Written in Go (golang).
+<p align="center">
+  <a href="https://github.com/mab-go/nmea/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/mab-go/nmea/ci.yml?style=flat&logo=github&logoColor=white&labelColor=555555&label=build" alt="Build Status" /></a>
+  <a href="https://codecov.io/gh/mab-go/nmea"><img src="https://img.shields.io/codecov/c/github/mab-go/nmea?style=flat&logo=codecov&logoColor=white&labelColor=555555" alt="Code Coverage" /></a>
+  <a href="https://goreportcard.com/report/github.com/mab-go/nmea"><img src="https://goreportcard.com/badge/github.com/mab-go/nmea?style=flat" alt="Go Report Card" /></a>
+  <a href="https://pkg.go.dev/github.com/mab-go/nmea"><img src="https://img.shields.io/badge/-reference-00ADD8?style=flat&logo=go&logoColor=white&labelColor=555555" alt="Go Reference" /></a>
+  <a href="https://deepwiki.com/mab-go/nmea"><img src="https://img.shields.io/badge/DeepWiki-nmea-blue?style=flat&logoColor=white&labelColor=555555" alt="Ask DeepWiki" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/mab-go/nmea?style=flat&labelColor=555555" alt="License: MIT" /></a>
+</p>
 
-Requires **Go 1.26** or newer.
+A Go library for parsing NMEA 0183 sentences. Verify checksums, extract typed
+fields, and decode sentence types like GPGGA and GPGLL into structured Go
+values.
 
-[![codecov](https://codecov.io/gh/mab-go/nmea/branch/main/graph/badge.svg)](https://codecov.io/gh/mab-go/nmea)
-[![Go Report Card](https://goreportcard.com/badge/github.com/mab-go/nmea)](https://goreportcard.com/report/github.com/mab-go/nmea)
-[![Go Reference](https://pkg.go.dev/badge/github.com/mab-go/nmea.svg)](https://pkg.go.dev/github.com/mab-go/nmea)
+---
+
+## Quick Start
+
+```go
+import (
+    "fmt"
+    "log"
+
+    "github.com/mab-go/nmea/sentence/gpgga"
+)
+
+fix, err := gpgga.Parse("$GPGGA,174800.864,4002.741,N,07618.550,W,1,12,1.0,0.0,M,0.0,M,,*70")
+if err != nil {
+    log.Fatal(err)
+}
+fmt.Printf("Lat: %f %s, Lon: %f %s\n", fix.Latitude, fix.NorthSouth, fix.Longitude, fix.EastWest)
+```
+
+---
+
+## Installation
+
+```bash
+go get github.com/mab-go/nmea
+```
+
+Requires Go 1.26 or later.
+
+---
+
+## Supported Sentences
+
+| Package          | Sentence | Description                                                               |
+|------------------|----------|---------------------------------------------------------------------------|
+| `sentence/gpgga` | GPGGA    | GPS fix data: time, lat/lon, fix quality, satellite count, HDOP, altitude |
+| `sentence/gpgll` | GPGLL    | Geographic position: lat/lon, fix time, data status, mode                 |
+
+The `sentence` package provides lower-level building blocks usable with any
+NMEA 0183 sentence:
+
+- **`VerifyChecksum`** — validates the `*XX` checksum on a raw sentence string
+- **`SegmentParser`** — splits a sentence into typed fields (`AsFloat64`,
+  `AsInt16`, `AsString`, and more)
+
+---
 
 ## Development
 
-### Codecov
+First-time setup (installs golangci-lint, goimports, gocyclo into `./bin`):
 
-CI uploads coverage from GitHub Actions using [`codecov/codecov-action@v5`](https://github.com/codecov/codecov-action) with **OIDC** (`use_oidc: true`), so no upload token is required in the workflow once Codecov trusts GitHub for this repository.
-
-1. Install the [Codecov GitHub app](https://github.com/apps/codecov) for **`mab-go`** and grant access to **`nmea`** (maintainers: also confirm the repo is enabled on [codecov.io](https://codecov.io) and the default branch is **`main`**).
-2. If uploads fail or your Codecov setup requires a repository token, add a **`CODECOV_TOKEN`** repository secret and follow the action README to pass `token: ${{ secrets.CODECOV_TOKEN }}` (and drop OIDC if you switch to token-based upload).
-
-Coverage status checks are **informational** (see [`codecov.yml`](codecov.yml)); a failed upload step still fails CI.
-
-### Running Tests
-
-Using `go test`:
-
-```
-go test ./...
+```bash
+make setup
 ```
 
-Using `goconvey` (Web UI):
+Then:
 
+```bash
+make test        # Run all tests (with -race by default)
+make test:cover  # Tests + HTML coverage report
+make lint        # golangci-lint
+make fmt         # goimports
 ```
-goconvey
-```
+
+Run `make help` for the full list of targets.
+
+---
+
+## License
+
+MIT. See [LICENSE](LICENSE).
