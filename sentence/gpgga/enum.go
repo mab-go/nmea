@@ -56,4 +56,4 @@ const (
 	SimulationFixQuality // 8
 )
 
-//go:generate enumer -type=NorthSouth,EastWest,FixQuality -text -linecomment -transform=first-upper -output=enum_gen.go
+//go:generate go run github.com/dmarkham/enumer@v1.6.3 -type=NorthSouth,EastWest,FixQuality -text -linecomment -transform=first-upper -output=enum_gen.go

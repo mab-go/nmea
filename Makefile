@@ -25,6 +25,7 @@ OPEN ?= $(shell command -v xdg-open 2>/dev/null || echo "open")
 
 .PHONY: help \
         setup \
+        generate \
         test test\:cover \
         lint lint\:fix fmt vet cyclo \
         mod\:tidy mod\:verify \
@@ -108,6 +109,13 @@ vet: ## Run go vet
 cyclo: ## Run gocyclo; run 'make setup' first
 	@test -x $(GOCYCLO) || (echo "Run 'make setup' to install gocyclo" && exit 1)
 	$(GOCYCLO) -over 10 .
+
+#------------------------------------------------------------------------------
+# Generate
+#------------------------------------------------------------------------------
+
+generate: ## Run go generate ./...
+	go generate ./...
 
 #------------------------------------------------------------------------------
 # Module

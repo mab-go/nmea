@@ -56,7 +56,7 @@ func NorthSouthString(s string) (NorthSouth, error) {
 	return 0, fmt.Errorf("%s does not belong to NorthSouth values", s)
 }
 
-// NorthSouthValuDataStatus,Modees returns all values of the enum
+// NorthSouthValues returns all values of the enum
 func NorthSouthValues() []NorthSouth {
 	return _NorthSouthValues
 }

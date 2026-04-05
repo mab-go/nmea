@@ -57,4 +57,4 @@ const (
 	InvalidMode // N
 )
 
-//go:generate enumer -type=NorthSouth,EastWest,DataStatus,Mode -text -linecomment -transform=first-upper -output=enum_gen.go
+//go:generate go run github.com/dmarkham/enumer@v1.6.3 -type=NorthSouth,EastWest,DataStatus,Mode -text -linecomment -transform=first-upper -output=enum_gen.go
