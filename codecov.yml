@@ -1,6 +1,10 @@
 codecov:
   branch: main
 
+ignore:
+  - "**/*_gen.go"
+  - "sentence/testhelp/**"
+
 coverage:
   status:
     project:

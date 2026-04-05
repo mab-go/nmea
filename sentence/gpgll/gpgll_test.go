@@ -172,6 +172,13 @@ func TestParse_badSegments(t *testing.T) {
 	}
 }
 
+func TestGPGLL_GetSentenceType(t *testing.T) {
+	gpgll := &GPGLL{}
+	if st := gpgll.GetSentenceType(); st != "GPGLL" {
+		t.Errorf("GetSentenceType() should have returned \"GPGLL\" but returned \"%v\"", st)
+	}
+}
+
 func ExampleParse() {
 	sentence := "$GPGLL,3723.2475,N,12158.3416,W,161229.487,A,A*41"
 	gpgll, err := Parse(sentence)

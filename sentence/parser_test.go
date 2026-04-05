@@ -1,11 +1,31 @@
 package sentence
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
 	"github.com/mab-go/nmea/sentence/testhelp"
 )
+
+// referenceSentence is a valid GPGGA sentence used as the base for most
+// SegmentParser tests. Segment indices:
+//
+//		[0]=GPGGA  [1]=183730  [2]=3907.356  [3]=N    [4]=12102.482
+//		[5]=W      [6]=1       [7]=05        [8]=1.6  [9]=646.4
+//	 [10]=M     [11]=-24.1  [12]=M        [13]=(empty)
+const referenceSentence = "$GPGGA,183730,3907.356,N,12102.482,W,1,05,1.6,646.4,M,-24.1,M,,*75"
+
+// mustParse returns a SegmentParser that has successfully parsed referenceSentence.
+func mustParse(t *testing.T) *SegmentParser {
+	t.Helper()
+	p := &SegmentParser{}
+	if err := p.Parse(referenceSentence); err != nil {
+		t.Fatalf("failed to parse reference sentence: %v", err)
+	}
+
+	return p
+}
 
 type parseTestData struct {
 	Title, Sentence, ActualChecksum, AdvertisedChecksum, ErrMsg string
@@ -62,66 +82,536 @@ func TestSegmentParser_Parse_invalidChecksums(t *testing.T) {
 }
 
 func TestSegmentParser_Err(t *testing.T) {
-	t.Skip()
-}
-
-func TestSegmentParser_AsFloat32(t *testing.T) {
-	sentence := "$GPGGA,183730,3907.356,N,12102.482,W,1,05,1.6,646.4,M,-24.1,M,,*75"
-	parser := &SegmentParser{}
-	if err := parser.Parse(sentence); err != nil {
-		t.Errorf("segment parsing failed: %v", err)
-	}
-
-	// Test with a float32
-	t.Run("Good Data", func(t *testing.T) {
-		expected := float32(646.4)
-		actual := parser.AsFloat32(9) // Unit under test
-		if actual != expected {
-			t.Errorf("expected result to be %v but was %v", expected, actual)
+	t.Run("No Error", func(t *testing.T) {
+		p := mustParse(t)
+		if p.Err() != nil {
+			t.Errorf("expected Err() to be nil but was %v", p.Err())
 		}
 	})
 
-	// Test with out-of-range index
-	// t.Run("Index Out of Range", func(t *testing.T) {
-	//	v := parser.AsFloat32(99)
-	//	if parser.Err() == nil {
-	//		t.Errorf("!!! %v", err)
-	//	}
-	// })
+	t.Run("After Failed Accessor", func(t *testing.T) {
+		p := mustParse(t)
+		p.AsFloat32(99) // out-of-range index sets an error
+		if p.Err() == nil {
+			t.Error("expected Err() to be non-nil after out-of-range access")
+		}
+	})
+}
+
+func TestSegmentParser_AsFloat32(t *testing.T) {
+	t.Run("Good Data", func(t *testing.T) {
+		p := mustParse(t)
+		expected := float32(646.4)
+		actual := p.AsFloat32(9)
+		if actual != expected {
+			t.Errorf("expected %v but was %v", expected, actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error but got %v", p.Err())
+		}
+	})
+
+	t.Run("Empty Segment", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsFloat32(13) // segment [13] is empty
+		if actual != 0 {
+			t.Errorf("expected 0 for empty segment but was %v", actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error for empty segment but got %v", p.Err())
+		}
+	})
+
+	t.Run("Unparsable Value", func(t *testing.T) {
+		p := mustParse(t)
+		p.segments[2] = "not_a_float"
+		actual := p.AsFloat32(2)
+		if actual != 0 {
+			t.Errorf("expected 0 on parse failure but was %v", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error for unparsable value but got nil")
+		}
+	})
+
+	t.Run("Out-of-Range Index", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsFloat32(99)
+		if actual != 0 {
+			t.Errorf("expected 0 on out-of-range index but was %v", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error for out-of-range index but got nil")
+		}
+	})
+
+	t.Run("Pre-existing Error", func(t *testing.T) {
+		p := mustParse(t)
+		p.AsFloat32(99) // sets error
+		firstErr := p.Err()
+		p.AsFloat32(9) // should exit early, leaving error unchanged
+		if !errors.Is(p.Err(), firstErr) {
+			t.Errorf("expected error to remain unchanged but it changed to %v", p.Err())
+		}
+	})
 }
 
 func TestSegmentParser_AsFloat64(t *testing.T) {
-	/*
-		"$GPGGA,183730,3907.356,N,12102.482,W,1,05,1.6,646.4,M,-24.1,M,,*75"
-	*/
+	t.Run("Good Data", func(t *testing.T) {
+		p := mustParse(t)
+		expected := 3907.356
+		actual := p.AsFloat64(2)
+		if actual != expected {
+			t.Errorf("expected %v but was %v", expected, actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error but got %v", p.Err())
+		}
+	})
 
-	t.Skip()
+	t.Run("Empty Segment", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsFloat64(13)
+		if actual != 0 {
+			t.Errorf("expected 0 for empty segment but was %v", actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error for empty segment but got %v", p.Err())
+		}
+	})
+
+	t.Run("Unparsable Value", func(t *testing.T) {
+		p := mustParse(t)
+		p.segments[2] = "not_a_float"
+		actual := p.AsFloat64(2)
+		if actual != 0 {
+			t.Errorf("expected 0 on parse failure but was %v", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error for unparsable value but got nil")
+		}
+	})
+
+	t.Run("Out-of-Range Index", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsFloat64(99)
+		if actual != 0 {
+			t.Errorf("expected 0 on out-of-range index but was %v", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error for out-of-range index but got nil")
+		}
+	})
+
+	t.Run("Pre-existing Error", func(t *testing.T) {
+		p := mustParse(t)
+		p.AsFloat64(99)
+		firstErr := p.Err()
+		p.AsFloat64(2)
+		if !errors.Is(p.Err(), firstErr) {
+			t.Errorf("expected error to remain unchanged but it changed to %v", p.Err())
+		}
+	})
 }
 
 func TestSegmentParser_AsInt8(t *testing.T) {
-	t.Skip()
+	t.Run("Good Data", func(t *testing.T) {
+		p := mustParse(t)
+		expected := int8(1)
+		actual := p.AsInt8(6) // segment [6] = "1"
+		if actual != expected {
+			t.Errorf("expected %v but was %v", expected, actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error but got %v", p.Err())
+		}
+	})
+
+	t.Run("Empty Segment", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsInt8(13)
+		if actual != 0 {
+			t.Errorf("expected 0 for empty segment but was %v", actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error for empty segment but got %v", p.Err())
+		}
+	})
+
+	t.Run("Unparsable Value", func(t *testing.T) {
+		p := mustParse(t)
+		p.segments[6] = "not_an_int"
+		actual := p.AsInt8(6)
+		if actual != 0 {
+			t.Errorf("expected 0 on parse failure but was %v", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error for unparsable value but got nil")
+		}
+	})
+
+	t.Run("Out-of-Range Index", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsInt8(99)
+		if actual != 0 {
+			t.Errorf("expected 0 on out-of-range index but was %v", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error for out-of-range index but got nil")
+		}
+	})
+
+	t.Run("Pre-existing Error", func(t *testing.T) {
+		p := mustParse(t)
+		p.AsInt8(99)
+		firstErr := p.Err()
+		p.AsInt8(6)
+		if !errors.Is(p.Err(), firstErr) {
+			t.Errorf("expected error to remain unchanged but it changed to %v", p.Err())
+		}
+	})
 }
 
 func TestSegmentParser_AsInt8InRange(t *testing.T) {
-	t.Skip()
+	t.Run("Good Data In Range", func(t *testing.T) {
+		p := mustParse(t)
+		expected := int8(1)
+		actual := p.AsInt8InRange(6, 0, 9) // segment [6] = "1", range [0,9]
+		if actual != expected {
+			t.Errorf("expected %v but was %v", expected, actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error but got %v", p.Err())
+		}
+	})
+
+	t.Run("Value Below Range", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsInt8InRange(6, 5, 9) // "1" is below lower bound 5
+		if actual != 0 {
+			t.Errorf("expected 0 when below range but was %v", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error when value is below range but got nil")
+		}
+	})
+
+	t.Run("Value Above Range", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsInt8InRange(6, 0, 0) // "1" is above upper bound 0
+		if actual != 0 {
+			t.Errorf("expected 0 when above range but was %v", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error when value is above range but got nil")
+		}
+	})
+}
+
+func TestSegmentParser_AsInt8InRange_errors(t *testing.T) {
+	t.Run("Out-of-Range Index", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsInt8InRange(99, 0, 9)
+		if actual != 0 {
+			t.Errorf("expected 0 on out-of-range index but was %v", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error for out-of-range index but got nil")
+		}
+	})
+
+	t.Run("Unparsable Value", func(t *testing.T) {
+		p := mustParse(t)
+		p.segments[6] = "not_an_int"
+		actual := p.AsInt8InRange(6, 0, 9)
+		if actual != 0 {
+			t.Errorf("expected 0 on unparsable value but was %v", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error for unparsable value but got nil")
+		}
+	})
+
+	t.Run("Pre-existing Error", func(t *testing.T) {
+		p := mustParse(t)
+		p.AsInt8InRange(99, 0, 9)
+		firstErr := p.Err()
+		p.AsInt8InRange(6, 0, 9)
+		if !errors.Is(p.Err(), firstErr) {
+			t.Errorf("expected error to remain unchanged but it changed to %v", p.Err())
+		}
+	})
 }
 
 func TestSegmentParser_AsInt16(t *testing.T) {
-	t.Skip()
+	t.Run("Good Data", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsInt16(7) // segment [7] = "05"
+		if actual != 5 {
+			t.Errorf("expected 5 but was %v", actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error but got %v", p.Err())
+		}
+	})
+
+	t.Run("Empty Segment", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsInt16(13)
+		if actual != 0 {
+			t.Errorf("expected 0 for empty segment but was %v", actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error for empty segment but got %v", p.Err())
+		}
+	})
+
+	t.Run("Unparsable Value", func(t *testing.T) {
+		p := mustParse(t)
+		p.segments[7] = "not_an_int"
+		actual := p.AsInt16(7)
+		if actual != 0 {
+			t.Errorf("expected 0 on parse failure but was %v", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error for unparsable value but got nil")
+		}
+	})
+
+	t.Run("Out-of-Range Index", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsInt16(99)
+		if actual != 0 {
+			t.Errorf("expected 0 on out-of-range index but was %v", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error for out-of-range index but got nil")
+		}
+	})
+
+	t.Run("Pre-existing Error", func(t *testing.T) {
+		p := mustParse(t)
+		p.AsInt16(99)
+		firstErr := p.Err()
+		p.AsInt16(7)
+		if !errors.Is(p.Err(), firstErr) {
+			t.Errorf("expected error to remain unchanged but it changed to %v", p.Err())
+		}
+	})
 }
 
 func TestSegmentParser_AsInt32(t *testing.T) {
-	t.Skip()
+	t.Run("Good Data", func(t *testing.T) {
+		p := mustParse(t)
+		expected := int32(183730)
+		actual := p.AsInt32(1) // segment [1] = "183730"
+		if actual != expected {
+			t.Errorf("expected %v but was %v", expected, actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error but got %v", p.Err())
+		}
+	})
+
+	t.Run("Empty Segment", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsInt32(13)
+		if actual != 0 {
+			t.Errorf("expected 0 for empty segment but was %v", actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error for empty segment but got %v", p.Err())
+		}
+	})
+
+	t.Run("Unparsable Value", func(t *testing.T) {
+		p := mustParse(t)
+		p.segments[1] = "not_an_int"
+		actual := p.AsInt32(1)
+		if actual != 0 {
+			t.Errorf("expected 0 on parse failure but was %v", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error for unparsable value but got nil")
+		}
+	})
+
+	t.Run("Out-of-Range Index", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsInt32(99)
+		if actual != 0 {
+			t.Errorf("expected 0 on out-of-range index but was %v", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error for out-of-range index but got nil")
+		}
+	})
+
+	t.Run("Pre-existing Error", func(t *testing.T) {
+		p := mustParse(t)
+		p.AsInt32(99)
+		firstErr := p.Err()
+		p.AsInt32(1)
+		if !errors.Is(p.Err(), firstErr) {
+			t.Errorf("expected error to remain unchanged but it changed to %v", p.Err())
+		}
+	})
 }
 
-func TestSegmentParser_AsInt64(t *testing.T) {
-	t.Skip()
+func TestSegmentParser_AsString(t *testing.T) {
+	t.Run("Good Data", func(t *testing.T) {
+		p := mustParse(t)
+		expected := "GPGGA"
+		actual := p.AsString(0)
+		if actual != expected {
+			t.Errorf("expected %q but was %q", expected, actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error but got %v", p.Err())
+		}
+	})
+
+	t.Run("Empty Segment", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsString(13)
+		if actual != "" {
+			t.Errorf("expected empty string for empty segment but was %q", actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error for empty segment but got %v", p.Err())
+		}
+	})
+
+	t.Run("Out-of-Range Index", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.AsString(99)
+		if actual != "" {
+			t.Errorf("expected empty string on out-of-range index but was %q", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error for out-of-range index but got nil")
+		}
+	})
+
+	t.Run("Pre-existing Error", func(t *testing.T) {
+		p := mustParse(t)
+		p.AsString(99)
+		firstErr := p.Err()
+		p.AsString(0)
+		if !errors.Is(p.Err(), firstErr) {
+			t.Errorf("expected error to remain unchanged but it changed to %v", p.Err())
+		}
+	})
 }
 
 func TestSegmentParser_RequireString(t *testing.T) {
-	t.Skip()
+	t.Run("Match", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.RequireString(0, "GPGGA")
+		if actual != "GPGGA" {
+			t.Errorf("expected %q but was %q", "GPGGA", actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error but got %v", p.Err())
+		}
+	})
+
+	t.Run("Case-Insensitive Match", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.RequireString(0, "gpgga")
+		if actual != "GPGGA" {
+			t.Errorf("expected %q but was %q", "GPGGA", actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error on case-insensitive match but got %v", p.Err())
+		}
+	})
+
+	t.Run("Mismatch", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.RequireString(0, "GPGLL")
+		if actual != "" {
+			t.Errorf("expected empty string on mismatch but was %q", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error on mismatch but got nil")
+		}
+	})
+
+	t.Run("Out-of-Range Index", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.RequireString(99, "GPGGA")
+		if actual != "" {
+			t.Errorf("expected empty string on out-of-range index but was %q", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error for out-of-range index but got nil")
+		}
+	})
+
+	t.Run("Pre-existing Error", func(t *testing.T) {
+		p := mustParse(t)
+		p.RequireString(99, "GPGGA")
+		firstErr := p.Err()
+		p.RequireString(0, "GPGGA")
+		if !errors.Is(p.Err(), firstErr) {
+			t.Errorf("expected error to remain unchanged but it changed to %v", p.Err())
+		}
+	})
 }
 
 func TestSegmentParser_RequireStrings(t *testing.T) {
-	t.Skip()
+	t.Run("Match", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.RequireStrings(0, []string{"GPGLL", "GPGGA", "GPRMC"})
+		if actual != "GPGGA" {
+			t.Errorf("expected %q but was %q", "GPGGA", actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error but got %v", p.Err())
+		}
+	})
+
+	t.Run("Case-Insensitive Match", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.RequireStrings(0, []string{"gpgga"})
+		if actual != "GPGGA" {
+			t.Errorf("expected %q but was %q", "GPGGA", actual)
+		}
+		if p.Err() != nil {
+			t.Errorf("expected no error on case-insensitive match but got %v", p.Err())
+		}
+	})
+
+	t.Run("No Match", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.RequireStrings(0, []string{"GPGLL", "GPRMC"})
+		if actual != "" {
+			t.Errorf("expected empty string when no match but was %q", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error when no match but got nil")
+		}
+	})
+
+	t.Run("Out-of-Range Index", func(t *testing.T) {
+		p := mustParse(t)
+		actual := p.RequireStrings(99, []string{"GPGGA"})
+		if actual != "" {
+			t.Errorf("expected empty string on out-of-range index but was %q", actual)
+		}
+		if p.Err() == nil {
+			t.Error("expected an error for out-of-range index but got nil")
+		}
+	})
+
+	t.Run("Pre-existing Error", func(t *testing.T) {
+		p := mustParse(t)
+		p.RequireStrings(99, []string{"GPGGA"})
+		firstErr := p.Err()
+		p.RequireStrings(0, []string{"GPGGA"})
+		if !errors.Is(p.Err(), firstErr) {
+			t.Errorf("expected error to remain unchanged but it changed to %v", p.Err())
+		}
+	})
 }
