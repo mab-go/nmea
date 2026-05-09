@@ -1,7 +1,7 @@
 # mab-go/nmea
 
 <p align="center">
-  <a href="https://github.com/mab-go/nmea/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/mab-go/nmea/ci.yml?style=flat&logo=github&logoColor=white&labelColor=555555&label=build" alt="Build Status" /></a>
+  <a href="https://github.com/mab-go/nmea/actions"><img src="https://img.shields.io/github/check-runs/mab-go/nmea/main?style=flat&labelColor=555555&label=checks" alt="Build Status" /></a>
   <a href="https://codecov.io/gh/mab-go/nmea"><img src="https://img.shields.io/codecov/c/github/mab-go/nmea?style=flat&logo=codecov&logoColor=white&labelColor=555555" alt="Code Coverage" /></a>
   <a href="https://goreportcard.com/report/github.com/mab-go/nmea"><img src="https://goreportcard.com/badge/github.com/mab-go/nmea?style=flat" alt="Go Report Card" /></a>
   <a href="https://pkg.go.dev/github.com/mab-go/nmea"><img src="https://img.shields.io/badge/-reference-00ADD8?style=flat&logo=go&logoColor=white&labelColor=555555" alt="Go Reference" /></a>
