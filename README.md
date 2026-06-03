@@ -51,6 +51,7 @@ Requires Go 1.26 or later.
 | `sentence/gpgga` | GPGGA    | GPS fix data: time, lat/lon, fix quality, satellite count, HDOP, altitude         |
 | `sentence/gpgll` | GPGLL    | Geographic position: lat/lon, fix time, data status, mode                         |
 | `sentence/gpgsa` | GPGSA    | GPS DOP and active satellites: selection mode, fix mode, PRN list, PDOP/HDOP/VDOP |
+| `sentence/gpvtg` | GPVTG    | GPS Track Made Good: true track, magnetic track, speed (knots/kmh), mode        |
 
 The `sentence` package provides lower-level building blocks usable with any
 NMEA 0183 sentence:
