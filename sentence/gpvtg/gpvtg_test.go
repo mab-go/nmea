@@ -11,7 +11,6 @@ type testVec struct {
 	errMsg   string
 }
 
-
 var goodTestData = map[string]testVec{
 	"Without Mode": {
 		input: "$GPVTG,054.7,T,034.4,M,005.5,N,010.2,K*48",
@@ -52,7 +51,6 @@ var goodTestData = map[string]testVec{
 		},
 	},
 }
-
 
 var badTestData = map[string]testVec{
 	"Bad SentenceType": {
@@ -97,14 +95,12 @@ var badTestData = map[string]testVec{
 	},
 }
 
-
 func assertMatches(t *testing.T, title, field string, expected, actual interface{}) {
 	t.Helper()
 	if actual != expected {
 		t.Errorf("%s should have been %v but was %v for NMEA input \"%v\"", field, expected, actual, title)
 	}
 }
-
 
 func TestParse_goodData(t *testing.T) {
 	for title, vec := range goodTestData {
@@ -124,7 +120,6 @@ func TestParse_goodData(t *testing.T) {
 	}
 }
 
-
 func TestParse_invalidChecksum(t *testing.T) {
 	gpvtg, err := Parse("$GPVTG,054.7,T,034.4,M,005.5,N,010.2,K*42")
 	if err == nil {
@@ -140,7 +135,6 @@ func TestParse_invalidChecksum(t *testing.T) {
 		t.Errorf("error message should have been '%v' but was '%v'", expected, err.Error())
 	}
 }
-
 
 func TestParse_badSegments(t *testing.T) {
 	for title, vec := range badTestData {
@@ -161,7 +155,6 @@ func TestParse_badSegments(t *testing.T) {
 	}
 }
 
-
 func TestGPVTG_GetSentenceType(t *testing.T) {
 	gpvtg := &GPVTG{}
 	if st := gpvtg.GetSentenceType(); st != "GPVTG" {
@@ -169,9 +162,8 @@ func TestGPVTG_GetSentenceType(t *testing.T) {
 	}
 }
 
-
 func TestSegmentParser_SegmentCount_gpvtg(t *testing.T) {
-	// Test "Without Mode" (no mode field, 10 segments, segment [9] absent)
+	// Test "Without Mode" (no mode field: 9 segments [0]-[8], segment [9] absent)
 	p := &SegmentParser{}
 	if err := p.Parse("$GPVTG,054.7,T,034.4,M,005.5,N,010.2,K*48"); err != nil {
 		t.Fatalf("failed to parse: %v", err)
@@ -180,7 +172,7 @@ func TestSegmentParser_SegmentCount_gpvtg(t *testing.T) {
 		t.Errorf("SegmentCount() = %d, want 9", n)
 	}
 
-	// Test "With Mode A" (11 segments, segment [9] empty, [10]=A)
+	// Test "With Mode A" (10 segments [0]-[9], Mode at segment [9]=A)
 	p2 := &SegmentParser{}
 	if err := p2.Parse("$GPVTG,054.7,T,034.4,M,005.5,N,010.2,K,A*25"); err != nil {
 		t.Fatalf("failed to parse: %v", err)
@@ -189,13 +181,13 @@ func TestSegmentParser_SegmentCount_gpvtg(t *testing.T) {
 		t.Errorf("SegmentCount() = %d, want 10", n)
 	}
 
-	// Test trailing-comma case: 11 segments, [9] empty, Mode at [10]
+	// Test trailing-comma case: 11 segments [0]-[10], empty Mode at segment [9]
 	p3 := &SegmentParser{}
 	if err := p3.Parse("$GPVTG,054.7,T,034.4,M,005.5,N,010.2,K,,*48"); err != nil {
 		t.Fatalf("failed to parse: %v", err)
 	}
 	if n := p3.SegmentCount(); n != 11 {
-		t.Errorf("SegmentCount() = %d, want 10 (trailing comma creates empty segment [9])", n)
+		t.Errorf("SegmentCount() = %d, want 11 (trailing comma creates empty segment [9])", n)
 	}
 	// Verify AsMode(9) returns Mode(0) for empty segment [9]
 	gpvtg, err := Parse("$GPVTG,054.7,T,034.4,M,005.5,N,010.2,K,,*48")
@@ -216,4 +208,3 @@ func ExampleParse() {
 	// Output:
 	// &{TrueTrack:54.7 MagTrack:34.4 SpeedKnots:5.5 SpeedKmh:10.2 Mode:A}
 }
-

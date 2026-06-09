@@ -37,10 +37,6 @@ func (p *SegmentParser) AsMode(i int8) Mode {
 	}
 
 	s := p.AsString(i)
-	if p.err != nil {
-		return Mode(0)
-	}
-
 	if s == "" {
 		return Mode(0)
 	}

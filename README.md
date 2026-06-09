@@ -46,11 +46,12 @@ Requires Go 1.26 or later.
 
 ## Supported Sentences
 
-| Package          | Sentence | Description                                                                       |
-|------------------|----------|-----------------------------------------------------------------------------------|
-| `sentence/gpgga` | GPGGA    | GPS fix data: time, lat/lon, fix quality, satellite count, HDOP, altitude         |
-| `sentence/gpgll` | GPGLL    | Geographic position: lat/lon, fix time, data status, mode                         |
-| `sentence/gpgsa` | GPGSA    | GPS DOP and active satellites: selection mode, fix mode, PRN list, PDOP/HDOP/VDOP |
+| Package          | Sentence | Description                                                                          |
+|------------------|----------|--------------------------------------------------------------------------------------|
+| `sentence/gpgga` | GPGGA    | GPS fix data: time, lat/lon, fix quality, satellite count, HDOP, altitude            |
+| `sentence/gpgll` | GPGLL    | Geographic position: lat/lon, fix time, data status, mode                            |
+| `sentence/gpgsa` | GPGSA    | GPS DOP and active satellites: selection mode, fix mode, PRN list, PDOP/HDOP/VDOP    |
+| `sentence/gpvtg` | GPVTG    | Track made good and ground speed: true/magnetic track, speed in knots and km/h, mode |
 
 The `sentence` package provides lower-level building blocks usable with any
 NMEA 0183 sentence:
