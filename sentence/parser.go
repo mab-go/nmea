@@ -225,6 +225,11 @@ func (p *SegmentParser) RequireStrings(i int8, s []string) string {
 	return ""
 }
 
+// SegmentCount returns the number of segments in the parsed sentence.
+func (p *SegmentParser) SegmentCount() int {
+	return len(p.segments)
+}
+
 // --- Private -----------------------------------------------------------------
 
 func (p *SegmentParser) asInt(i int8, bitSize int) interface{} {

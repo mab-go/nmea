@@ -98,6 +98,13 @@ func TestSegmentParser_Err(t *testing.T) {
 	})
 }
 
+func TestSegmentParser_SegmentCount(t *testing.T) {
+	p := mustParse(t)
+	if n := p.SegmentCount(); n != 15 {
+		t.Errorf("SegmentCount() = %d, want 15", n)
+	}
+}
+
 func TestSegmentParser_AsFloat32(t *testing.T) {
 	t.Run("Good Data", func(t *testing.T) {
 		p := mustParse(t)

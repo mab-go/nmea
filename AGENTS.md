@@ -41,6 +41,8 @@ sentence/
     gpgll.go / parser.go / enum.go / enum_gen.go / gpgll_test.go
   gpgsa/                   — GPS DOP and active satellites (GPGSA)
     gpgsa.go / parser.go / enum.go / enum_gen.go / gpgsa_test.go
+  gpvtg/                   — Track made good and ground speed (GPVTG)
+    gpvtg.go / parser.go / enum.go / enum_gen.go / gpvtg_test.go
 tools/
   test-cover.sh            — coverage script wrapper
 .agents/
